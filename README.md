@@ -36,6 +36,7 @@ coding!
 
 - David Eastmond: [GitHub](https://github.com/davideastmond) / [LinkedIn](https://www.linkedin.com/in/david-eastmond-2783ab18a/)
 - Wei-Teck Lee: [GitHub](https://github.com/weitecklee) / [LinkedIn](https://www.linkedin.com/in/weitecklee/)
+- Brian Stasiukaitis [GitHub](https://github.com/BrianStas) / [LinkedIn](https://www.linkedin.com/in/brian-stasiukaitis)
 
 - Yhormi A #2: [GitHub](https://github.com/LootingMonk) / [LinkedIn](https://www.linkedin.com/in/yomiajayi/)
 
