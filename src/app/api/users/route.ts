@@ -2,20 +2,19 @@ import dbConnect from "../../../lib/mongodb/mongodb";
 import { UserModel } from "../../../lib/schemas/user.schema";
 import { NextRequest, NextResponse } from "next/server";
 
- export async function GET(req: NextRequest){
-    const requestBody = await req.json();
-  const { id } = requestBody;
+export async function GET(req: NextRequest){
+    
     await dbConnect(); 
     try {
-        const user = await UserModel.findOne({id});
-        if (!user) {
+        const users = await UserModel.find();
+        if (!users) {
             return NextResponse.json({ 
                 status: 404,
-                message: 'User not found' });
+                message: 'No users found' });
         }
         NextResponse.json({
             status: 200,
-            user: user.toObject()
+            users: users
         });
     } catch (error) {
         NextResponse.json({
