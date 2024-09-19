@@ -2,9 +2,9 @@ import dbConnect from "../../../../lib/mongodb/mongodb";
 import { UserModel } from "../../../../lib/schemas/user.schema";
 import { NextRequest, NextResponse } from "next/server";
 
- export async function GET(req: NextRequest){
-    const requestBody = await req.json();
-  const { id } = requestBody;
+
+ export async function GET(req: NextRequest, {params}:{ params: { userId: string }}){
+    const id = params.userId;
     await dbConnect(); 
     try {
         const user = await UserModel.findOne({id});
