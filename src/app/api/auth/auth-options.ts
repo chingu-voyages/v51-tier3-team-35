@@ -50,8 +50,8 @@ export const authOptions: NextAuthOptions = {
           return { email: user.email, name: user.name, _id: user._id } as any;
         } else {
           console.error("Password incorrect");
-          return null;
         }
+        return null;
       },
     }),
   ],
