@@ -9,7 +9,7 @@ export const fetchUserProfile = async (userId: string) => {
 
 export const updateUserProfile = async (name: string, email: string, userId: string) => {
     const response = await fetch(`/api/users/${userId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email }),
     });
