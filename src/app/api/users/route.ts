@@ -7,17 +7,18 @@ export async function GET(req: NextRequest){
     await dbConnect(); 
     try {
         const users = await UserModel.find();
+        console.log("users are: ", users)
         if (!users) {
             return NextResponse.json({ 
                 status: 404,
                 message: 'No users found' });
         }
-        NextResponse.json({
+        return NextResponse.json({
             status: 200,
             users: users
         });
     } catch (error) {
-        NextResponse.json({
+        return NextResponse.json({
             status: 500,
             message: 'Server error' });
     }
