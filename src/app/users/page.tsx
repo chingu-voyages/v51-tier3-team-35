@@ -1,10 +1,7 @@
 
 import { fetchUsers } from '../services/userService';
 
-interface User {
-  _id: string;
-  name: string;
-}
+
 
 
 export default async function UsersPage() {
@@ -14,7 +11,7 @@ export default async function UsersPage() {
       <h1>User List</h1>
       <ul>
         {users.length > 0 ? (
-          users.map((user: User) => (
+          users.map((user) => (
             <li key={user._id}>{user.name}</li>
           ))
         ) : (

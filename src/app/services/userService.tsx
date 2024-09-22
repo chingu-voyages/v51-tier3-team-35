@@ -1,4 +1,6 @@
-export const fetchUserProfile = async (userId: string) => {
+import { User } from "../../lib/models/user.model";
+
+export const fetchUserProfile = async (userId: string): Promise<Partial<User>> => {
     const response = await fetch(`/api/users/${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -17,7 +19,7 @@ export const updateUserProfile = async (name: string, email: string, userId: str
     return response.json();
 };
 
-export const fetchUsers = async() =>{
+export const fetchUsers = async(): Promise<Partial<User>[]> =>{
     const response = await fetch('/api/users', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
