@@ -23,3 +23,20 @@ import { NextRequest, NextResponse } from "next/server";
             message: 'Server error' });
     }
 }
+
+export async function PATCH(req: NextRequest, {params}:{ params: { userId: string }}){
+    const id = params.userId;
+    const requestBody = await req.json();
+    
+    await dbConnect();
+    const updatedUser = await UserModel.findByIdAndUpdate(id, requestBody, {new: true});
+    if (!updatedUser) {
+        return NextResponse.json({ 
+            status: 404,
+            message: 'User not found' });
+    }
+    NextResponse.json({
+        status: 200,
+        user: updatedUser.toObject()
+    });
+}
