@@ -25,5 +25,6 @@ export const fetchUsers = async(): Promise<Partial<User>[]> =>{
         headers: { 'Content-Type': 'application/json' },
     });
     if (!response.ok) throw new Error('Error fetching users');
-    return response.json();
+    const data = await response.json();
+    return data.users;
 }
