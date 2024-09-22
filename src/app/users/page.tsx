@@ -6,6 +6,7 @@ import { fetchUsers } from '../services/userService';
 
 export default async function UsersPage() {
     const users = await fetchUsers();
+    console.log("users in page are: ", users);
   return (
     <div>
       <h1>User List</h1>
