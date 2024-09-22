@@ -4,12 +4,12 @@ export type Adventure = {
   _id?: string;
   name: string;
   description?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  createdBy: string;
   participants: string[]; // userIds
   occurrences: Occurrence[];
   imageUrl?: string;
   startDate: Date;
   endDate: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: string;
 };

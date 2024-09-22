@@ -21,6 +21,14 @@ const adventureSchema = new Schema<Adventure>(
     },
     participants: { type: [String], default: [] },
     occurrences: { type: [occurrenceSchema], default: [] },
+    startDate: {
+      type: Date,
+      required: true,
+    },
+    endDate: {
+      type: Date,
+      required: true,
+    },
   },
   { timestamps: true }
 );
