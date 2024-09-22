@@ -10,4 +10,6 @@ export type Adventure = {
   participants: string[]; // userIds
   occurrences: Occurrence[];
   imageUrl?: string;
+  startDate: Date;
+  endDate: Date;
 };

@@ -10,7 +10,6 @@ const adventureSchema = new Schema<Adventure>(
     },
     description: {
       type: String,
-      required: true,
     },
     imageUrl: {
       type: String,
@@ -20,6 +19,7 @@ const adventureSchema = new Schema<Adventure>(
       ref: "User",
       required: true,
     },
+    participants: { type: [String], default: [] },
     occurrences: { type: [occurrenceSchema], default: [] },
   },
   { timestamps: true }
