@@ -136,7 +136,7 @@ export default function NewAdventurePage() {
                 {/* The section for picking a start and end date. These datepickers aren't compatible with Formik */}
                 <div className="flex gap-x-6 ml-8">
                   <div>
-                    <h4>When does the event start?</h4>
+                    <h4>Adventure starts:</h4>
                     <DatePicker
                       selected={dateRange.startDate}
                       onChange={(e) => handleCalendarChange(e, "startDate")}
@@ -145,7 +145,7 @@ export default function NewAdventurePage() {
                     />
                   </div>
                   <div>
-                    <h4>When does the event end?</h4>
+                    <h4>Adventure ends:</h4>
                     <DatePicker
                       selected={dateRange.endDate}
                       onChange={(e) => handleCalendarChange(e, "endDate")}
