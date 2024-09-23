@@ -11,6 +11,15 @@ export const AdventureService = {
     }
     throw new Error("Failed to fetch adventures");
   },
+
+  async getAdventureById(id: string): Promise<Adventure> {
+    const res = await fetch(`/api/adventure/${id}`);
+    if (res.ok) {
+      return await res.json();
+    }
+    throw new Error("Failed to fetch adventure");
+  },
+
   async postCreateAdventure({
     name,
     description,
