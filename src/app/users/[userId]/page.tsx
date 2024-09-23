@@ -9,19 +9,18 @@ import { User } from "../../../lib/models/user.model";
 
 export default function UserProfile({params}:{ params: { userId: string }}){
     const id = params.userId;
+    console.log("id on user profile is: ", id);
 
     const [isEditingName, setIsEditingName] = useState(false);
     const [isEditingPassword, setIsEditingPassword] = useState(false);
     const [user, setUser] = useState<Partial<User>>({});
-    const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() =>{
     fetchUserProfile(id)
-    .then((data: Partial<User>)=>{
-        setUser(data);
-    })
+    .then(setUser);
+    console.log("User now looks like: ", user);
     setIsLoading(false);
     },[])
 
@@ -41,12 +40,11 @@ export default function UserProfile({params}:{ params: { userId: string }}){
         {isEditingName ? (
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={user.name}
             className="mt-1 p-2 border border-gray-300 rounded w-full"
           />
         ) : (
-          <p className="mt-1 text-gray-700">{name}</p>
+          <p className="mt-1 text-gray-700">{user.name}</p>
         )}
         <button
           onClick={() => setIsEditingName(!isEditingName)}

@@ -4,21 +4,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 
  export async function GET(req: NextRequest, {params}:{ params: { userId: string }}){
-    const id = params.userId;
+    const _id = params.userId;
     await dbConnect(); 
     try {
-        const user = await UserModel.findOne({id});
+        const user = await UserModel.findOne({_id});
         if (!user) {
             return NextResponse.json({ 
                 status: 404,
                 message: 'User not found' });
         }
-        NextResponse.json({
+        return NextResponse.json({
             status: 200,
             user: user.toObject()
         });
     } catch (error) {
-        NextResponse.json({
+        return NextResponse.json({
             status: 500,
             message: 'Server error' });
     }

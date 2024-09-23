@@ -7,6 +7,7 @@ export const fetchUserProfile = async (userId: string): Promise<Partial<User>> =
     });
     if (!response.ok) throw new Error('Error fetching user profile');
     const data = await response.json();
+    console.log("data from fetch looks like: ", data)
     return data.user;
 };
 
