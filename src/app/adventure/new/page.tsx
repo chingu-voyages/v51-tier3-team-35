@@ -1,6 +1,7 @@
 "use client";
 import dayjs from "dayjs";
 import { Formik } from "formik";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
@@ -9,6 +10,7 @@ import { AdventureService } from "../../services/adventure-service";
 
 export default function NewAdventurePage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [dateRange, setDateRange] = useState<Record<string, Date>>({
     startDate: dayjs().toDate(),
     endDate: dayjs().add(7, "day").toDate(),
@@ -31,6 +33,12 @@ export default function NewAdventurePage() {
       };
     });
   };
+
+  if (status === "unauthenticated") {
+    // Only authenticated users can access this page
+    router.replace("/signin");
+    return null;
+  }
   return (
     <div>
       <header>

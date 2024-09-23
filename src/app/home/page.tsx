@@ -57,6 +57,25 @@ export default function HomePage() {
         <header>
           <h2 className="text-2xl">Your Adventures</h2>
         </header>
+        <div>
+          <table className="table">
+            <tbody>
+              {userAdventures.map((adventure) => (
+                <tr key={adventure._id}>
+                  <td>
+                    <h3>{adventure.name}</h3>
+                    <p>{adventure.description}</p>
+                  </td>
+                  <td>
+                    <Link href={`/adventure/view/${adventure._id}`}>
+                      <button className="btn btn-secondary">View</button>
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
