@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   const { name, description, startDate, endDate } = requestBody;
 
   await dbConnect();
-  // This creates a new blank adventure document and returns a url to the new adventure
+  // This creates a new blank adventure document and returns the adventure id
   try {
     const newAdventure = await AdventureModel.create({
       name,
