@@ -6,7 +6,8 @@ export const fetchUserProfile = async (userId: string): Promise<Partial<User>> =
         headers: { 'Content-Type': 'application/json' },
     });
     if (!response.ok) throw new Error('Error fetching user profile');
-    return response.json();
+    const data = await response.json();
+    return data.user;
 };
 
 export const updateUserProfile = async (name: string, email: string, userId: string) => {

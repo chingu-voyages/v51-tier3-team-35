@@ -1,4 +1,5 @@
 
+import Link from 'next/link';
 import { fetchUsers } from '../services/userService';
 
 
@@ -13,7 +14,10 @@ export default async function UsersPage() {
       <ul>
         {users.length > 0 ? (
           users.map((user) => (
-            <li key={user._id}>{user.name}</li>
+            <li key={user._id}>
+              <p>{user.name}</p>
+            <Link href={`/users/${user._id}`}>Profile</Link>
+            </li>
           ))
         ) : (
           <p>No users found</p>
