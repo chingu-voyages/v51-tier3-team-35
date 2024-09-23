@@ -33,6 +33,6 @@ const adventureSchema = new Schema<Adventure>(
   { timestamps: true }
 );
 
-export const AdventureModel =
+export const AdventureModel: mongoose.Model<Adventure> =
   mongoose.models.Adventure ||
   mongoose.model<Adventure>("Adventure", adventureSchema);
