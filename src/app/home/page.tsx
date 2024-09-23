@@ -10,10 +10,8 @@ import { AdventureService } from "../services/adventure-service";
 export default function HomePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-
-  console.log("session", session);
-
   const [userAdventures, setUserAdventures] = useState<Adventure[]>([]);
+
   useEffect(() => {
     fetchAdventuresByUser();
   }, []);
