@@ -1,7 +1,7 @@
 'use client'
 
-import { fetchUserProfile } from "../../services/userService";
-import { useState, useEffect } from "react";
+import { fetchUserProfile, updateUserProfile } from "../../services/userService";
+import { useState, useEffect, FormEvent } from "react";
 
 import { User } from "../../../lib/models/user.model";
 
@@ -10,12 +10,19 @@ import { User } from "../../../lib/models/user.model";
 export default function UserProfile({params}:{ params: { userId: string }}){
     const id = params.userId;
     console.log("id on user profile is: ", id);
+    const initialFormData = {
+        _id: id,
+        name: '',
+        email: '',
+        password: '',
+      };
 
     const [isEditingName, setIsEditingName] = useState(false);
     const [isEditingPassword, setIsEditingPassword] = useState(false);
     const [user, setUser] = useState<Partial<User>>({});
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [formData, setFormData] = useState({...initialFormData})
 
     useEffect(() =>{
     fetchUserProfile(id)
@@ -25,7 +32,19 @@ export default function UserProfile({params}:{ params: { userId: string }}){
     },[])
 
 
+    const handleChange = ({ target }) => {
+        setFormData({
+          ...formData,
+          [target.name]: target.value,
+        });
+      };
 
+      const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        updateUserProfile(formData.name, formData.email, formData._id)
+        setFormData({ ...formData });
+
+      };
 
   if(isLoading){
     return <div>Loading...</div>;
