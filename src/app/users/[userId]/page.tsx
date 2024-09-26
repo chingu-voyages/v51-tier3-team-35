@@ -39,7 +39,7 @@ export default function UserProfile({params}:{ params: { userId: string }}){
     
           <Formik
             initialValues={{
-              name: user.name,
+              name: user?.name || '',
               password: '',
             }}
             onSubmit={handleSubmit}
