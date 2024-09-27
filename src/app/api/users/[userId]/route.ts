@@ -35,7 +35,7 @@ export async function PATCH(req: NextRequest, {params}:{ params: { userId: strin
             status: 404,
             message: 'User not found' });
     }
-    NextResponse.json({
+   return NextResponse.json({
         status: 200,
         user: updatedUser.toObject()
     });
