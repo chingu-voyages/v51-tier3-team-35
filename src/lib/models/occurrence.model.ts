@@ -23,10 +23,18 @@ type AddressBasedOccurence = {
 export type EventType = "travel" | "accommodation" | "activity" | "food";
 
 export type TravelOccurrence = BaseOccurrence & {
-  method: "train" | "plane" | "car" | "bus" | "watercraft";
+  method: TravelOccurrenceMethod;
   startLocation: Address;
   endLocation?: Address;
 };
+
+export enum TravelOccurrenceMethod {
+  Train = "train",
+  Plane = "plane",
+  Car = "car",
+  Bus = "bus",
+  Watercraft = "watercraft",
+}
 
 export type AccommodationOccurrence = BaseOccurrence & AddressBasedOccurence;
 
