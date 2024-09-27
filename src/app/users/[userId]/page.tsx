@@ -43,7 +43,7 @@ export default function UserProfile({params}:{ params: { userId: string }}){
         <div className="max-w-4xl mx-auto p-6">
           <h1 className="text-2xl font-semibold mb-4">User Profile</h1>
 
-          {!isEditing ? (
+          {isEditing === false ? (
             <div>
             <div className="mb-4">
               <label className="block text-sm font-medium">Name</label>
@@ -61,7 +61,7 @@ export default function UserProfile({params}:{ params: { userId: string }}){
             </div>
   
             <button
-              onClick={() => setIsEditing(true)} // Switch to edit mode
+              onClick={() => setIsEditing(true)}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             >
               Edit
