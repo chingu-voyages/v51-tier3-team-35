@@ -1,11 +1,13 @@
 "use client";
 import dayjs from "dayjs";
-import mongoose from "mongoose";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { OccurrenceModal } from "../../../../components/occurrence-modal/Occurrence-modal";
+import { OccurrenceToolbar } from "../../../../components/occurrence-toolbar/Occurrence-toolbar";
 import { Adventure } from "../../../../lib/models/adventure.model";
+import { EventType } from "../../../../lib/models/occurrence.model";
 import { AdventureService } from "../../../services/adventure-service";
 
 interface EventOccurrenceData {
@@ -18,6 +20,9 @@ export default function ViewEditAdventurePage() {
   const params = useParams<{ adventureId: string }>();
   const [currentDate, setCurrentDate] = useState(dayjs("2024-09-22"));
   const [adventure, setAdventure] = useState<Adventure | null>(null);
+  const [activeTabOption, setActiveTabOption] = useState<EventType>("travel");
+  const [modalOpen, setModalOpen] = useState(false);
+
   const [eventOccurrences, setEventOccurrences] = useState<
     EventOccurrenceData[]
   >([
@@ -59,18 +64,7 @@ export default function ViewEditAdventurePage() {
 
   const handleSelectSlot = useCallback(
     ({ start, end }: { start: Date; end: Date }) => {
-      // This will need to send a put request eventualy, but just testing
-      setEventOccurrences((prev) => {
-        return [
-          ...prev,
-          {
-            _id: new mongoose.Types.ObjectId().toString(),
-            title: "New Event",
-            start,
-            end,
-          },
-        ];
-      });
+      setModalOpen(true);
     },
     []
   );
@@ -94,6 +88,13 @@ export default function ViewEditAdventurePage() {
   // This is a placeholder to get basic functionality working
   return (
     <div>
+      <OccurrenceToolbar
+        onTabChange={(eventType: EventType) => {
+          // We set the current active option to the selected tab
+          // When the modal opens, it opens to the correct occurrence (event) type
+          setActiveTabOption(eventType);
+        }}
+      />
       <h1>View edit an adventure with id {params.adventureId}</h1>
       <h1>{adventure?.description}</h1>
       <div>
@@ -109,11 +110,20 @@ export default function ViewEditAdventurePage() {
           onSelectEvent={handleSelectEvent}
           onSelectSlot={handleSelectSlot}
           onView={(view) => console.log(view)}
-          className=""
           style={{ height: 800 }}
           selectable
         />
       </div>
+      <OccurrenceModal
+        id="ocmodal"
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        occurrenceType={activeTabOption}
+        onSubmit={(data) => {
+          console.debug("123 viewPage", data);
+          setModalOpen(false);
+        }}
+      />
     </div>
   );
 }
