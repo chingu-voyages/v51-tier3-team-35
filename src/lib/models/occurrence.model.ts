@@ -36,7 +36,12 @@ export enum TravelOccurrenceMethod {
   Watercraft = "watercraft",
 }
 
-export type AccommodationOccurrence = BaseOccurrence & AddressBasedOccurence;
+export type AccommodationOccurrence = BaseOccurrence &
+  AddressBasedOccurence & {
+    accommodationName: string;
+    checkIn: Date;
+    checkOut: Date;
+  };
 
 export type ActivityOccurrence = BaseOccurrence & AddressBasedOccurence;
 export type FoodOccurrence = BaseOccurrence & AddressBasedOccurence;
