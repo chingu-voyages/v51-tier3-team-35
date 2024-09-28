@@ -48,7 +48,7 @@ export default function UserProfile({params}:{ params: { userId: string }}){
     
       const handleSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
         const response = await updateUserProfile(values.name, values.password, id);
-        if (response.ok) {
+        if (response.status === 200) {
           setUser((prevUser) => ({
             ...prevUser!,
             name: values.name, 
