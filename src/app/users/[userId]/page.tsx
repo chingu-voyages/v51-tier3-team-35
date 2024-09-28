@@ -30,6 +30,17 @@ export default function UserProfile({params}:{ params: { userId: string }}){
         password: '',
       }
 
+      const validate = (values: FormValues) => {
+        const errors: Partial<FormValues> = {};
+        if (!values.name) {
+          errors.name = 'Name is required';
+        }
+        if (values.password.length > 0 && values.password.length < 8) {
+          errors.password = 'Password must be at least 8 characters long';
+        }
+        return errors;
+      };
+
     if (!user) {
         return <div>Loading...</div>;
       }
@@ -72,6 +83,7 @@ export default function UserProfile({params}:{ params: { userId: string }}){
           <Formik
             initialValues={initialFormValues}
             enableReinitialize
+            validate={validate}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting }) => (
