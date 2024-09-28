@@ -1,6 +1,7 @@
 import dbConnect from "../../../../lib/mongodb/mongodb";
 import { UserModel } from "../../../../lib/schemas/user.schema";
 import { NextRequest, NextResponse } from "next/server";
+import { hash } from "bcrypt";
 
 
  export async function GET(req: NextRequest, {params}:{ params: { userId: string }}){
@@ -26,7 +27,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(req: NextRequest, {params}:{ params: { userId: string }}){
     const id = params.userId;
-    const requestBody = await req.json();
+    const data = await req.json();
+    const hashedPassword = await hash(data.password, 10);
+    const requestBody = {
+        name: data.name,
+        password: hashedPassword
+    }
+    console.log("request body looks like: ", requestBody)
     
     await dbConnect();
     const updatedUser = await UserModel.findByIdAndUpdate(id, requestBody, {new: true});

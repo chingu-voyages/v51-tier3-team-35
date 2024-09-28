@@ -4,7 +4,7 @@ import { fetchUserProfile, updateUserProfile } from "../../services/userService"
 import { useState, useEffect, FormEvent } from "react";
 
 import { User } from "../../../lib/models/user.model";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 
 interface FormValues {
     name: string;
@@ -46,8 +46,16 @@ export default function UserProfile({params}:{ params: { userId: string }}){
       }
     console.log("isEditing? ", isEditing);
     
-      const handleSubmit = async (values: FormValues) => {
-        await updateUserProfile(values.name, values.password, id);
+      const handleSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
+        const response = await updateUserProfile(values.name, values.password, id);
+        if (response.ok) {
+          setUser((prevUser) => ({
+            ...prevUser!,
+            name: values.name, 
+          }));
+          setIsEditing(false);
+        }
+        actions.setSubmitting(false);
       };
     
       return (
@@ -126,9 +134,14 @@ export default function UserProfile({params}:{ params: { userId: string }}){
                     type="submit"
                     disabled={isSubmitting}
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    onClick={() => setIsEditing(false)}
                   >
                     Save Changes
+                  </button>
+                  <button
+                  type="button"
+                  onClick={()=> setIsEditing(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    Cancel
                   </button>
                 </div>
               </Form>
