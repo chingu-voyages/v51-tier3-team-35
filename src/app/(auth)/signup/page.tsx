@@ -3,10 +3,14 @@ import { Formik } from "formik";
 import Link from "next/link";
 import { FaGoogle } from "react-icons/fa";
 import { AuthService } from "../../services/auth-service";
+import { CiUser } from "react-icons/ci";
 
 export default function SignupPage() {
   return (
     <div>
+      <section className="w-full flex justify-center mb-8">
+        <CiUser size={72}  className=" line-clamp-1 input-bordered text-gray-400 "/>
+      </section>
       <Formik
         initialValues={{
           email: "",
@@ -73,72 +77,93 @@ export default function SignupPage() {
           isSubmitting,
         }) => (
           <form onSubmit={handleSubmit}>
-            <div className="w-full flex flex-col gap-y-2">
-              <input
-                type="email"
-                name="email"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.email}
-                placeholder="E-mail address"
-                className="input input-bordered w-full"
-              />
-              <div className="text-orange-600">
-                {errors.email && touched.email && errors.email}
-              </div>
-              <input
-                type="text"
-                name="name"
-                placeholder="Name"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.name}
-                className="input input-bordered w-full"
-              />
-              <div className="text-orange-600">
-                {errors.name && touched.name && errors.name}
-              </div>
-              <input
-                type="password"
-                name="password"
-                placeholder="Create Password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-                className="input input-bordered w-full"
-              />
-              <div className="text-orange-600">
-                {errors.password && touched.password && errors.password}
-              </div>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.confirmPassword}
-                className="input input-bordered w-full"
-              />
-              <div className="text-orange-600">
-                {errors.confirmPassword &&
-                  touched.confirmPassword &&
-                  errors.confirmPassword}
-              </div>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={isSubmitting}
-              >
-                Sign Up
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  alert("Sign up with Google");
-                }}
-              >
-                <FaGoogle /> Sign up with Google
-              </button>
+            <div className="w-full flex flex-col gap-y-4">
+              {/* inputs  */}
+              <section>
+                <label htmlFor="email" className="text-lg font-semibold">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.email}
+                  placeholder="E-mail address"
+                  className={`input input-bordered w-full ${errors.email && touched.email && errors.email ?'border-red-500':""}`}
+                />
+                <div className="text-orange-600 text-sm">
+                  {errors.email && touched.email && errors.email}
+                </div>
+              </section>
+
+              <section>
+                <label htmlFor="name" className="text-lg font-semibold">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.name}
+                  className={`input input-bordered w-full ${errors.name && touched.name && errors.name ?'border-red-500':""}`}
+                />
+                <div className="text-orange-600 text-sm">
+                  {errors.name && touched.name && errors.name}
+                </div>
+              </section>
+
+              <section>
+                <label htmlFor="email" className="font-semibold text-lg">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Create Password"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.password}
+                  className={`input input-bordered w-full ${errors.password && touched.password && errors.password ?'border-red-500':""}`}
+                />
+                <div className="text-orange-600 text-sm">
+                  {errors.password && touched.password && errors.password}
+                </div>
+              </section>
+
+              <section>
+                <label htmlFor="confirmPassword" className="text-lg font-semibold">Repeat password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.confirmPassword}
+                  className={`input input-bordered w-full ${errors.confirmPassword && touched.confirmPassword && errors.confirmPassword ?'border-red-500':""}`}
+                />
+                <div className="text-orange-600">
+                  {errors.confirmPassword &&
+                    touched.confirmPassword &&
+                    errors.confirmPassword}
+                </div>
+              </section>
+
+              {/* btns */}
+              <section className="flex flex-col gap-y-2">  
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={isSubmitting}
+                >
+                  Sign Up
+                </button>
+                <button
+                  className="btn "
+                  onClick={() => {
+                    alert("Sign up with Google");
+                  }}
+                >
+                  <FaGoogle /> Sign up with Google
+                </button>
+              </section>
+
               <div className="flex justify-center">
                 <p>
                   Already have an account?{" "}

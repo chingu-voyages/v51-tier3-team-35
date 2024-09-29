@@ -79,10 +79,10 @@ export default function SigninPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.email}
-                  className="input input-bordered w-full"
+                  className={`input input-bordered w-full ${errors.email && touched.email && errors.email ?'border-red-500':""}`}
                   placeholder="E-mail address"
                 />
-                <div className="text-orange-600">
+                <div className="text-orange-600 text-sm">
                   {errors.email && touched.email && errors.email}
                 </div>
               </section>
@@ -95,16 +95,16 @@ export default function SigninPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.password}
-                  className="input input-bordered w-full"
+                  className={`input input-bordered w-full ${errors.password && touched.password && errors.password ?'border-red-500':""}`}
                   placeholder="Password"
                 />
-                <div className="text-orange-600">
+                <div className="text-orange-600 text-sm">
                   {errors.password && touched.password && errors.password}
                 </div>
               </section>
 
               {/* API Errors here */}
-              {apiError && <div className="text-red-600">{apiError}</div>}
+              {apiError && <div className="text-red-600 text-sm">{apiError}</div>}
               
               {/* btns  */}
               <section className="w-full flex flex-col gap-y-2"> 
