@@ -31,8 +31,6 @@ export const travelOccurrence = (
   */
   return (
     <div>
-      <h3 className="font-bold text-2xl mb-4">{`New Travel Event`}</h3>
-      <div className="divider"></div>
       <div>
         <h4 className="font-bold text-lg">Travel Method</h4>
 

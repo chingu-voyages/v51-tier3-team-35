@@ -43,8 +43,6 @@ export const accommodationOccurrence = (
   };
   return (
     <div>
-      <h3 className="font-bold text-2xl mb-4">{`New Accommodation Event`}</h3>
-      <div className="divider"></div>
       <div>
         <h4 className="font-bold text-lg">Name of accommodation</h4>
         <input
