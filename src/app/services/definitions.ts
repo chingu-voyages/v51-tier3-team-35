@@ -1,12 +1,12 @@
-import { OccurrenceSubmissionData } from "../../components/occurrence-modal/definitions";
 import { EventType } from "../../lib/models/occurrence.model";
 
-export type OccurrenceApiPutRequest = {
+export type OccurrenceApiPutRequest<T> = {
   eventType: EventType;
   startDate?: Date;
   endDate?: Date;
   adventureId: string;
-  data: OccurrenceSubmissionData;
+  data: T;
   notes?: string;
   description?: string;
+  title: string;
 };

@@ -50,7 +50,7 @@ export const AdventureService = {
     throw new Error("Failed to create adventure");
   },
 
-  async putUpdateAdventure({
+  async putUpdateAdventure<T>({
     eventType,
     data,
     startDate,
@@ -58,7 +58,8 @@ export const AdventureService = {
     adventureId,
     notes,
     description,
-  }: OccurrenceApiPutRequest): Promise<void> {
+    title,
+  }: OccurrenceApiPutRequest<T>): Promise<void> {
     const res = await fetch(`/api/adventure/${adventureId}/occurrence`, {
       method: "PUT",
       headers: {
@@ -72,6 +73,7 @@ export const AdventureService = {
         adventureId,
         notes,
         description,
+        title,
       }),
     });
     if (!res.ok) {

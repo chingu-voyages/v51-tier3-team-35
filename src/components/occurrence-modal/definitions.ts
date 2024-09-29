@@ -15,7 +15,6 @@ export interface AccommodationOccurrenceSubmitData {
 
 export interface ActivityOccurrenceSubmitData {
   location: google.maps.places.PlaceResult;
-  title: string;
 }
 
 export interface FoodOccurrenceSubmitData

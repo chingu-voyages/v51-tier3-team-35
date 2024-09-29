@@ -1,6 +1,7 @@
 "use client";
 import dayjs from "dayjs";
-import { useParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -25,6 +26,8 @@ export default function ViewEditAdventurePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [slotStartDate, setSlotStartDate] = useState<Date | null>(null);
   const [slotEndDate, setSlotEndDate] = useState<Date | null>(null);
+  const router = useRouter();
+  const { status } = useSession();
 
   const [eventOccurrences, setEventOccurrences] = useState<
     EventOccurrenceData[]
@@ -77,7 +80,11 @@ export default function ViewEditAdventurePage() {
   // Here is where we send the post request to the server
   const submitData = async (
     data: OccurrenceSubmissionData,
-    { notes, description }: { notes?: string; description?: string }
+    {
+      notes,
+      description,
+      title,
+    }: { notes?: string; description?: string; title: string }
   ) => {
     await AdventureService.putUpdateAdventure({
       eventType: activeTabOption,
@@ -87,6 +94,7 @@ export default function ViewEditAdventurePage() {
       adventureId: params.adventureId,
       notes,
       description,
+      title,
     });
   };
 
@@ -106,6 +114,11 @@ export default function ViewEditAdventurePage() {
     }
   };
 
+  if (status === "unauthenticated") {
+    // Only authenticated users can access this page
+    router.replace("/signin");
+    return null;
+  }
   // This is a placeholder to get basic functionality working
   return (
     <div>
@@ -140,9 +153,9 @@ export default function ViewEditAdventurePage() {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         occurrenceType={activeTabOption}
-        onSubmit={(data, { notes, description }) => {
+        onSubmit={(data, { notes, description, title }) => {
           setModalOpen(false);
-          submitData(data, { notes, description });
+          submitData(data, { notes, description, title });
         }}
       />
     </div>
