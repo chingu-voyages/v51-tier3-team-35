@@ -14,7 +14,10 @@ interface OccurrenceModalProps {
   onClose: () => void;
   onSubmit?: (
     data: OccurrenceSubmissionData,
-    { notes, description }: { notes?: string; description?: string }
+    {
+      notes,
+      description,
+    }: { notes?: string; description?: string; title: string }
   ) => void;
 }
 
@@ -24,10 +27,22 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   */
 
   const handleDataSubmit = (data: OccurrenceSubmissionData) => {
-    props.onSubmit && props.onSubmit(data, { notes, description });
+    props.onSubmit && props.onSubmit(data, { notes, description, title });
   };
 
-  const getModalType = (occurrenceType: EventType) => {
+  const getModalTitleForEventType = (occurrenceType: EventType) => {
+    switch (occurrenceType) {
+      case "travel":
+        return "New Travel Event";
+      case "accommodation":
+        return "New Accommodation Event";
+      case "activity":
+        return "New Activity Event";
+      case "food":
+        return "New Food Event";
+    }
+  };
+  const getModalForEventType = (occurrenceType: EventType) => {
     switch (occurrenceType) {
       case "travel":
         return travelOccurrence(
@@ -122,11 +137,26 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
 
   const [notes, setNotes] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
   return (
     <div className={`absolute w-full top-[0] modal-container`}>
       <div className="modal-box w-11/12 max-w-5xl">
-        {/* Modal header */}
-        {getModalType(props.occurrenceType)}
+        <h3 className="font-bold text-2xl mb-4">
+          {getModalTitleForEventType(props.occurrenceType)}
+        </h3>
+        <div>
+          <h4 className="font-bold text-lg">Title</h4>
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            maxLength={100}
+          />
+        </div>
+        {getModalForEventType(props.occurrenceType)}
+        {/* Title section */}
       </div>
     </div>
   );
