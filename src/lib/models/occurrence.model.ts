@@ -6,11 +6,11 @@ type BaseOccurrence = {
   title: string;
   eventType: EventType;
   description?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   createdBy: string;
-  startTime: Date;
-  endTime: Date;
+  startTime?: Date;
+  endTime?: Date;
   notes?: string;
   comments?: UserComment[];
 };
