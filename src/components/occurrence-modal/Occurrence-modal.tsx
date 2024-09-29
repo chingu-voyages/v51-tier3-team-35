@@ -12,7 +12,10 @@ interface OccurrenceModalProps {
   occurrenceType: EventType; // Events and occurrences are the same thing.
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: (data: OccurrenceSubmissionData) => void;
+  onSubmit?: (
+    data: OccurrenceSubmissionData,
+    { notes, description }: { notes?: string; description?: string }
+  ) => void;
 }
 
 export function OccurrenceModal(props: OccurrenceModalProps) {
@@ -21,7 +24,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   */
 
   const handleDataSubmit = (data: OccurrenceSubmissionData) => {
-    props.onSubmit && props.onSubmit(data);
+    props.onSubmit && props.onSubmit(data, { notes, description });
   };
 
   const getModalType = (occurrenceType: EventType) => {

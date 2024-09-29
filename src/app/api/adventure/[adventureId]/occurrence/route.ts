@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-
 import { getServerSession } from "next-auth";
-import dbConnect from "../../../../lib/mongodb/mongodb";
-import { AdventureModel } from "../../../../lib/schemas/adventure.schema";
+import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "../../../../../lib/mongodb/mongodb";
+import { AdventureModel } from "../../../../../lib/schemas/adventure.schema";
 
-export async function GET(
+export async function PUT(
   req: NextRequest,
   { params }: { params: { adventureId: string } }
 ) {
@@ -13,22 +12,22 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  await dbConnect();
-  // Find the adventure by id
-  try {
-    const adventure = await AdventureModel.findById(params.adventureId);
+  const requestBody = await req.json();
+  console.info(requestBody);
 
+  await dbConnect();
+  try {
+    // Find the adventure, make sure it exists
+    const adventure = await AdventureModel.findById(params.adventureId);
     if (!adventure) {
       return NextResponse.json(
         { error: `Adventure with id ${params.adventureId} not found` },
         { status: 404 }
       );
     }
-    return NextResponse.json(adventure, { status: 200 });
+
+    return NextResponse.json({ message: "Success" }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json(
-      { error: `Failed to get adventure: ${error}` },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

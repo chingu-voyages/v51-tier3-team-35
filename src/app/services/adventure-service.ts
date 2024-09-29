@@ -1,4 +1,5 @@
 import { Adventure } from "../../lib/models/adventure.model";
+import { OccurrenceApiPutRequest } from "./definitions";
 
 /**
  * Fetching adventures for the authenticated user
@@ -47,5 +48,34 @@ export const AdventureService = {
       return await res.json();
     }
     throw new Error("Failed to create adventure");
+  },
+
+  async putUpdateAdventure({
+    eventType,
+    data,
+    startDate,
+    endDate,
+    adventureId,
+    notes,
+    description,
+  }: OccurrenceApiPutRequest): Promise<void> {
+    const res = await fetch(`/api/adventure/${adventureId}/occurrence`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        eventType,
+        data,
+        startDate,
+        endDate,
+        adventureId,
+        notes,
+        description,
+      }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to update adventure");
+    }
   },
 };

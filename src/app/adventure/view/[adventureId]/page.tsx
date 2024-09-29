@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { OccurrenceSubmissionData } from "../../../../components/occurrence-modal/definitions";
 import { OccurrenceModal } from "../../../../components/occurrence-modal/Occurrence-modal";
 import { OccurrenceToolbar } from "../../../../components/occurrence-toolbar/Occurrence-toolbar";
 import { Adventure } from "../../../../lib/models/adventure.model";
@@ -22,6 +23,8 @@ export default function ViewEditAdventurePage() {
   const [adventure, setAdventure] = useState<Adventure | null>(null);
   const [activeTabOption, setActiveTabOption] = useState<EventType>("travel");
   const [modalOpen, setModalOpen] = useState(false);
+  const [slotStartDate, setSlotStartDate] = useState<Date | null>(null);
+  const [slotEndDate, setSlotEndDate] = useState<Date | null>(null);
 
   const [eventOccurrences, setEventOccurrences] = useState<
     EventOccurrenceData[]
@@ -64,10 +67,28 @@ export default function ViewEditAdventurePage() {
 
   const handleSelectSlot = useCallback(
     ({ start, end }: { start: Date; end: Date }) => {
+      setSlotStartDate(start);
+      setSlotEndDate(end);
       setModalOpen(true);
     },
     []
   );
+
+  // Here is where we send the post request to the server
+  const submitData = async (
+    data: OccurrenceSubmissionData,
+    { notes, description }: { notes?: string; description?: string }
+  ) => {
+    await AdventureService.putUpdateAdventure({
+      eventType: activeTabOption,
+      data,
+      startDate: slotStartDate!,
+      endDate: slotEndDate!,
+      adventureId: params.adventureId,
+      notes,
+      description,
+    });
+  };
 
   const handleNavigate = (date: Date, view: string, action: string) => {
     if (action === "NEXT") {
@@ -119,9 +140,9 @@ export default function ViewEditAdventurePage() {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         occurrenceType={activeTabOption}
-        onSubmit={(data) => {
-          console.debug("123 viewPage", data);
+        onSubmit={(data, { notes, description }) => {
           setModalOpen(false);
+          submitData(data, { notes, description });
         }}
       />
     </div>

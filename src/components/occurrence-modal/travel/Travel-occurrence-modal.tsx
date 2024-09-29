@@ -38,7 +38,7 @@ export const travelOccurrence = (
 
         {Object.keys(TravelOccurrenceMethod).map((method) => {
           return (
-            <div className="form-control" key={method}>
+            <div className="form-control pt-2 pb-2" key={method}>
               <label htmlFor={method} className="cursor-pointer">
                 <div className="flex justify-between">
                   <p className=" text-lg">{method}</p>
@@ -48,7 +48,9 @@ export const travelOccurrence = (
                     value={selectedTravelMethod as string}
                     className="w-[20px]"
                     onChange={() => {
-                      setSelectedTravelMethod(method as any);
+                      setSelectedTravelMethod(
+                        (TravelOccurrenceMethod as any)[method]
+                      );
                     }}
                   />
                 </div>
@@ -86,10 +88,10 @@ export const travelOccurrence = (
       {children}
       <ModalButtonControls
         onSubmit={() => {
-          if (selectedTravelMethod && startAddress) {
+          if (selectedTravelMethod) {
             props.onSubmit({
               travelMethod: selectedTravelMethod,
-              startLocation: startAddress,
+              startLocation: startAddress!,
               endLocation: endAddress,
             });
           }

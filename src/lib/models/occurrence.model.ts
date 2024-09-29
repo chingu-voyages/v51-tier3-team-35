@@ -24,7 +24,7 @@ export type EventType = "travel" | "accommodation" | "activity" | "food";
 
 export type TravelOccurrence = BaseOccurrence & {
   method: TravelOccurrenceMethod;
-  startLocation: Address;
+  startLocation?: Address;
   endLocation?: Address;
 };
 
