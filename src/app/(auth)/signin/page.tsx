@@ -72,14 +72,14 @@ export default function SigninPage() {
           <form onSubmit={handleSubmit}>
             <div className="w-full flex flex-col gap-y-6">
               <section>
-                <label className="font-semibold text-lg py-" htmlFor="email">Email</label>
+                <label className="font-normal text-lg py-" htmlFor="email">Email</label>
                 <input
                   type="email"
                   name="email"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.email}
-                  className={`input input-bordered w-full ${errors.email && touched.email && errors.email ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${errors.email && touched.email && errors.email ?'border-red-500':""}`}
                   placeholder="E-mail address"
                 />
                 <div className="text-orange-600 text-sm">
@@ -88,14 +88,14 @@ export default function SigninPage() {
               </section>
 
               <section>
-                <label className="font-semibold text-lg" htmlFor="password">Password</label>
+                <label className="font-normal text-lg" htmlFor="password">Password</label>
                 <input
                   type="password"
                   name="password"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.password}
-                  className={`input input-bordered w-full ${errors.password && touched.password && errors.password ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${errors.password && touched.password && errors.password ?'border-red-500':""}`}
                   placeholder="Password"
                 />
                 <div className="text-orange-600 text-sm">
@@ -111,12 +111,13 @@ export default function SigninPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn btn-primary"
+                  className="btn btn-primary rounded-full"
                 >
                   Sign in
                 </button>
-                <button className="btn " onClick={handleGoogleSignIn}>
-                  <FaGoogle /> Sign in with Google
+                <p className="text-center text-sm">Or</p>
+                <button className="btn rounded-full" onClick={handleGoogleSignIn}>
+                  <FaGoogle /> Continue with Google
                 </button>
               </section>
 

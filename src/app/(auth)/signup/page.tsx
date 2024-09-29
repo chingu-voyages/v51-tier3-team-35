@@ -77,10 +77,10 @@ export default function SignupPage() {
           isSubmitting,
         }) => (
           <form onSubmit={handleSubmit}>
-            <div className="w-full flex flex-col gap-y-4">
+            <div className="w-full flex flex-col gap-y-3">
               {/* inputs  */}
               <section>
-                <label htmlFor="email" className="text-lg font-semibold">Email</label>
+                <label htmlFor="email" className="text-lg font-normal">Email</label>
                 <input
                   type="email"
                   name="email"
@@ -88,7 +88,7 @@ export default function SignupPage() {
                   onBlur={handleBlur}
                   value={values.email}
                   placeholder="E-mail address"
-                  className={`input input-bordered w-full ${errors.email && touched.email && errors.email ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${errors.email && touched.email && errors.email ?'border-red-500':""}`}
                 />
                 <div className="text-orange-600 text-sm">
                   {errors.email && touched.email && errors.email}
@@ -96,7 +96,7 @@ export default function SignupPage() {
               </section>
 
               <section>
-                <label htmlFor="name" className="text-lg font-semibold">Name</label>
+                <label htmlFor="name" className="text-lg font-normal">Name</label>
                 <input
                   type="text"
                   name="name"
@@ -104,7 +104,7 @@ export default function SignupPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.name}
-                  className={`input input-bordered w-full ${errors.name && touched.name && errors.name ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${errors.name && touched.name && errors.name ?'border-red-500':""}`}
                 />
                 <div className="text-orange-600 text-sm">
                   {errors.name && touched.name && errors.name}
@@ -112,7 +112,7 @@ export default function SignupPage() {
               </section>
 
               <section>
-                <label htmlFor="email" className="font-semibold text-lg">Password</label>
+                <label htmlFor="email" className="font-normal text-lg">Password</label>
                 <input
                   type="password"
                   name="password"
@@ -120,7 +120,7 @@ export default function SignupPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.password}
-                  className={`input input-bordered w-full ${errors.password && touched.password && errors.password ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${errors.password && touched.password && errors.password ?'border-red-500':""}`}
                 />
                 <div className="text-orange-600 text-sm">
                   {errors.password && touched.password && errors.password}
@@ -128,7 +128,7 @@ export default function SignupPage() {
               </section>
 
               <section>
-                <label htmlFor="confirmPassword" className="text-lg font-semibold">Repeat password</label>
+                <label htmlFor="confirmPassword" className="text-lg font-normal">Repeat password</label>
                 <input
                   type="password"
                   name="confirmPassword"
@@ -136,7 +136,7 @@ export default function SignupPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.confirmPassword}
-                  className={`input input-bordered w-full ${errors.confirmPassword && touched.confirmPassword && errors.confirmPassword ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${errors.confirmPassword && touched.confirmPassword && errors.confirmPassword ?'border-red-500':""}`}
                 />
                 <div className="text-orange-600">
                   {errors.confirmPassword &&
@@ -144,23 +144,23 @@ export default function SignupPage() {
                     errors.confirmPassword}
                 </div>
               </section>
-
               {/* btns */}
               <section className="flex flex-col gap-y-2">  
                 <button
                   type="submit"
-                  className="btn btn-primary"
+                  className="btn btn-primary rounded-full"
                   disabled={isSubmitting}
                 >
                   Sign Up
                 </button>
+                <p className="text-center text-sm">Or</p>
                 <button
-                  className="btn "
+                  className="btn rounded-full"
                   onClick={() => {
                     alert("Sign up with Google");
                   }}
                 >
-                  <FaGoogle /> Sign up with Google
+                  <FaGoogle /> Continue with Google
                 </button>
               </section>
 
