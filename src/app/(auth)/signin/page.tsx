@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
-import { AuthService } from "../services/auth-service";
+import { CiUser } from "react-icons/ci";
+import { AuthService } from "../../services/auth-service";
+
 
 export default function SigninPage() {
   const [apiError, setApiError] = useState<string | null>(null);
@@ -19,6 +21,9 @@ export default function SigninPage() {
   };
   return (
     <div>
+      <section className="w-full flex justify-center mb-12">
+        <CiUser size={72}  className=" line-clamp-1 input-bordered text-gray-400 "/>
+      </section>
       <Formik
         initialValues={{
           email: "",
@@ -65,44 +70,56 @@ export default function SigninPage() {
           isSubmitting,
         }) => (
           <form onSubmit={handleSubmit}>
-            <div className="w-full flex flex-col gap-y-2">
-              <input
-                type="email"
-                name="email"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.email}
-                className="input input-bordered w-full"
-                placeholder="E-mail address"
-              />
-              <div className="text-orange-600">
-                {errors.email && touched.email && errors.email}
-              </div>
+            <div className="w-full flex flex-col gap-y-6">
+              <section>
+                <label className="font-semibold text-lg py-" htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.email}
+                  className="input input-bordered w-full"
+                  placeholder="E-mail address"
+                />
+                <div className="text-orange-600">
+                  {errors.email && touched.email && errors.email}
+                </div>
+              </section>
 
-              <input
-                type="password"
-                name="password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-                className="input input-bordered w-full"
-                placeholder="Password"
-              />
-              <div className="text-orange-600">
-                {errors.password && touched.password && errors.password}
-              </div>
+              <section>
+                <label className="font-semibold text-lg" htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.password}
+                  className="input input-bordered w-full"
+                  placeholder="Password"
+                />
+                <div className="text-orange-600">
+                  {errors.password && touched.password && errors.password}
+                </div>
+              </section>
+
               {/* API Errors here */}
               {apiError && <div className="text-red-600">{apiError}</div>}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="btn btn-primary"
-              >
-                Sign in
-              </button>
-              <button className="btn btn-primary" onClick={handleGoogleSignIn}>
-                <FaGoogle /> Sign in with Google
-              </button>
+              
+              {/* btns  */}
+              <section className="w-full flex flex-col gap-y-2"> 
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn btn-primary"
+                >
+                  Sign in
+                </button>
+                <button className="btn " onClick={handleGoogleSignIn}>
+                  <FaGoogle /> Sign in with Google
+                </button>
+              </section>
+
               <div className="flex justify-center">
                 <p>
                   Don't have an account?{" "}
