@@ -50,7 +50,7 @@ export const AdventureService = {
     throw new Error("Failed to create adventure");
   },
 
-  async putUpdateAdventure<T>({
+  async createOccurrence<T>({
     eventType,
     data,
     startDate,

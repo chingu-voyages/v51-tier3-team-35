@@ -86,7 +86,7 @@ export default function ViewEditAdventurePage() {
       title,
     }: { notes?: string; description?: string; title: string }
   ) => {
-    await AdventureService.putUpdateAdventure({
+    await AdventureService.createOccurrence({
       eventType: activeTabOption,
       data,
       startDate: slotStartDate!,
