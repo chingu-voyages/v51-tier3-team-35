@@ -22,13 +22,7 @@ export const travelOccurrence = (
     useState<google.maps.places.PlaceResult | null>(null);
   const [endAddress, setEndAddress] =
     useState<google.maps.places.PlaceResult | null>(null);
-  /* 
-    method,
-    startLocation
-    endLocation
 
-    (the start end time should be calculated from the calendar UI)
-  */
   return (
     <div>
       <div>
