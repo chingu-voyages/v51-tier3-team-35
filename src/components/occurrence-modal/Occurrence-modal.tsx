@@ -141,10 +141,12 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   return (
     <div className={`absolute w-full top-[0] modal-container`}>
       <div className="modal-box w-11/12 max-w-5xl">
+        {/* Modal title */}
         <h3 className="font-bold text-2xl mb-4">
           {getModalTitleForEventType(props.occurrenceType)}
         </h3>
         <div>
+          {/* Render a title input text field for all modal types */}
           <h4 className="font-bold text-lg">Title</h4>
           <input
             type="text"
@@ -155,8 +157,8 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
             maxLength={100}
           />
         </div>
+        {/* Modal is rendered here depending on the occurrence type */}
         {getModalForEventType(props.occurrenceType)}
-        {/* Title section */}
       </div>
     </div>
   );
