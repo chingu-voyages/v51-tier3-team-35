@@ -11,5 +11,5 @@ export interface BaseOccurrencePutRequestHandler<T> {
     userId: string,
     adventureDocument: AdventureDocument,
     requestBody: OccurrenceApiPutRequest<T>
-  ): Promise<any>;
+  ): Promise<AdventureDocument>;
 }
