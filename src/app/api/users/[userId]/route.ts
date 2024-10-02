@@ -1,11 +1,20 @@
 import dbConnect from "../../../../lib/mongodb/mongodb";
 import { UserModel } from "../../../../lib/schemas/user.schema";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcrypt";
+import authOptions from "../../auth/auth-options";
 
 
  export async function GET(req: NextRequest, {params}:{ params: { userId: string }}){
+    
     const _id = params.userId;
+
+    const session = await getServerSession(authOptions);
+    if (session?.user?._id !==_id) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await dbConnect(); 
     try {
         const user = await UserModel.findOne({_id});
