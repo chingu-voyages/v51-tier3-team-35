@@ -86,7 +86,7 @@ export const authOptions: NextAuthOptions = {
 
       const userSession = await UserModel.findOne({
         email: token.email,
-      }).select("-hashedPassword");
+      });
 
       token = {
         ...token,
@@ -100,7 +100,7 @@ export const authOptions: NextAuthOptions = {
       session = {
         ...session,
         user: {
-          _id: token._id,
+          _id: token._id!.toString(),
           name: token.name,
           email: token.email,
         } as any,

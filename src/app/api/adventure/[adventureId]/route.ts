@@ -3,12 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import dbConnect from "../../../../lib/mongodb/mongodb";
 import { AdventureModel } from "../../../../lib/schemas/adventure.schema";
+import authOptions from "../../auth/auth-options";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { adventureId: string } }
 ) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -31,11 +32,4 @@ export async function GET(
       { status: 500 }
     );
   }
-  return {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ adventureId: params.adventureId }),
-  };
 }
