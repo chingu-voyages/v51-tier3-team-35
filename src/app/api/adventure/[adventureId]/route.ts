@@ -25,6 +25,18 @@ export async function GET(
         { status: 404 }
       );
     }
+
+    // Check if the user is a participant. If not, add them to the participants array
+    if (!adventure.participants.includes(session.user!._id)) {
+      adventure.participants.push(session.user!._id);
+      console.info(
+        `${
+          session.user!._id
+        } is not a participant, adding them to the adventure...`
+      );
+      await adventure.save();
+    }
+
     return NextResponse.json(adventure, { status: 200 });
   } catch (error: any) {
     return NextResponse.json(
