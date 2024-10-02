@@ -32,12 +32,3 @@ export const updateUserProfile = async (name: string, password: string, userId: 
     }
 };
 
-export const fetchUsers = async(): Promise<Partial<User>[]> =>{
-    const response = await fetch('http://localhost:3000/api/users', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-    });
-    if (!response.ok) throw new Error('Error fetching users');
-    const data = await response.json();
-    return data.users;
-}
