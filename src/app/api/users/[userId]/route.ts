@@ -11,13 +11,13 @@ import authOptions from "../../auth/auth-options";
     const _id = params.userId;
 
     const session = await getServerSession(authOptions);
-    if (session?.user?._id !==_id) {
+    if (!session || !session.user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+      }
 
     await dbConnect(); 
     try {
-        const user = await UserModel.findOne({_id});
+        const user = await UserModel.findOne({_id}).select('-hashedPassword');
         if (!user) {
             return NextResponse.json({ 
                 status: 404,
@@ -36,6 +36,12 @@ import authOptions from "../../auth/auth-options";
 
 export async function PATCH(req: NextRequest, {params}:{ params: { userId: string }}){
     const id = params.userId;
+
+    const session = await getServerSession(authOptions);
+    if (session?.user?._id !==id) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const data = await req.json();
     const hashedPassword = await hash(data.password, 10);
     const requestBody = {
@@ -45,7 +51,7 @@ export async function PATCH(req: NextRequest, {params}:{ params: { userId: strin
     console.log("request body looks like: ", requestBody)
     
     await dbConnect();
-    const updatedUser = await UserModel.findByIdAndUpdate(id, requestBody, {new: true});
+    const updatedUser = await UserModel.findByIdAndUpdate(id, requestBody, {new: true}).select('-hashedPassword');
     if (!updatedUser) {
         return NextResponse.json({ 
             status: 404,
