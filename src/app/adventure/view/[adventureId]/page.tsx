@@ -11,16 +11,12 @@ import { OccurrenceToolbar } from "../../../../components/occurrence-toolbar/Occ
 import { Adventure } from "../../../../lib/models/adventure.model";
 import { EventType } from "../../../../lib/models/occurrence.model";
 import { AdventureService } from "../../../services/adventure-service";
+import { ReactBigCalendarEvent } from "../definitions/definitions";
+import { adaptToReactBigCalendarEvent } from "../utils/adapt-to-big-calendar";
 
-interface EventOccurrenceData {
-  _id: string;
-  title: string;
-  start: Date;
-  end: Date;
-}
 export default function ViewEditAdventurePage() {
   const params = useParams<{ adventureId: string }>();
-  const [currentDate, setCurrentDate] = useState(dayjs("2024-09-22"));
+  const [currentDate, setCurrentDate] = useState(dayjs());
   const [adventure, setAdventure] = useState<Adventure | null>(null);
   const [activeTabOption, setActiveTabOption] = useState<EventType>("travel");
   const [modalOpen, setModalOpen] = useState(false);
@@ -30,21 +26,8 @@ export default function ViewEditAdventurePage() {
   const { status } = useSession();
 
   const [eventOccurrences, setEventOccurrences] = useState<
-    EventOccurrenceData[]
-  >([
-    {
-      _id: "3",
-      title: "Direct Object",
-      start: dayjs().hour(4).minute(0).toDate(),
-      end: dayjs().hour(5).minute(0).toDate(),
-    },
-    {
-      _id: "4",
-      title: "Test2",
-      start: dayjs().add(1, "day").hour(4).minute(0).toDate(),
-      end: dayjs().add(1, "day").hour(5).minute(0).toDate(),
-    },
-  ]);
+    ReactBigCalendarEvent[]
+  >([]);
   useEffect(() => {
     fetchAdventureById();
   }, []);
@@ -58,6 +41,10 @@ export default function ViewEditAdventurePage() {
       );
 
       setAdventure(result);
+      const mappedEvents = result.occurrences.map((occurrence) =>
+        adaptToReactBigCalendarEvent(occurrence)
+      );
+      setEventOccurrences(mappedEvents);
     } catch (error) {
       // TODO: Redirect to an error page?
       console.error(error);
@@ -96,6 +83,9 @@ export default function ViewEditAdventurePage() {
       description,
       title,
     });
+
+    // Refresh the adventure data
+    await fetchAdventureById();
   };
 
   const handleNavigate = (date: Date, view: string, action: string) => {
@@ -146,6 +136,7 @@ export default function ViewEditAdventurePage() {
           onView={(view) => console.log(view)}
           style={{ height: 800 }}
           selectable
+          startAccessor={"start"}
         />
       </div>
       <OccurrenceModal
