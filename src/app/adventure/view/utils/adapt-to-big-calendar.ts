@@ -10,5 +10,6 @@ export function adaptToReactBigCalendarEvent(
     title: occ.title,
     start: dayjs(occ.startTime!).toDate(),
     end: dayjs(occ.endTime!).toDate(),
+    eventType: occ.eventType,
   };
 }
