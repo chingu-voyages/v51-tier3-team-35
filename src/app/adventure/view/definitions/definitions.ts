@@ -3,4 +3,5 @@ export interface ReactBigCalendarEvent {
   title: string;
   start: Date;
   end: Date;
+  eventType: string;
 }
