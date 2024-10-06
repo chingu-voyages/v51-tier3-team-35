@@ -19,9 +19,16 @@ export default function ViewEditAdventurePage() {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [adventure, setAdventure] = useState<Adventure | null>(null);
   const [activeTabOption, setActiveTabOption] = useState<EventType>("travel");
+
   const [modalOpen, setModalOpen] = useState(false);
+  const [existingEventModalOpen, setExistingEventModalOpen] = useState(false);
+
   const [slotStartDate, setSlotStartDate] = useState<Date | null>(null);
   const [slotEndDate, setSlotEndDate] = useState<Date | null>(null);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [selectedEventType, setSelectedEventType] = useState<EventType | null>(
+    null
+  );
   const router = useRouter();
   const { status } = useSession();
 
@@ -52,7 +59,12 @@ export default function ViewEditAdventurePage() {
   };
 
   const handleSelectEvent = useCallback((event: any) => {
-    console.log(event);
+    // TODO: Fix any type
+    if (event._id) {
+      setSelectedEventId(event._id);
+      setSelectedEventType(event.eventType);
+      setExistingEventModalOpen(true);
+    }
   }, []);
 
   const handleSelectSlot = useCallback(
@@ -63,6 +75,19 @@ export default function ViewEditAdventurePage() {
     },
     []
   );
+
+  const getModalTitleForEventType = (occurrenceType: EventType) => {
+    switch (occurrenceType) {
+      case "travel":
+        return "New Travel Event";
+      case "accommodation":
+        return "New Accommodation Event";
+      case "activity":
+        return "New Activity Event";
+      case "food":
+        return "New Food Event";
+    }
+  };
 
   // Here is where we send the post request to the server
   const submitData = async (
@@ -139,16 +164,36 @@ export default function ViewEditAdventurePage() {
           startAccessor={"start"}
         />
       </div>
-      <OccurrenceModal
-        id="ocmodal"
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        occurrenceType={activeTabOption}
-        onSubmit={(data, { notes, description, title }) => {
-          setModalOpen(false);
-          submitData(data, { notes, description, title });
-        }}
-      />
+      {modalOpen && (
+        <OccurrenceModal
+          id="create-occurrence-modal"
+          key="create-occurrence-modal"
+          onClose={() => setModalOpen(false)}
+          adventureId={params.adventureId}
+          occurrenceType={activeTabOption}
+          newEvent={true}
+          title={getModalTitleForEventType(activeTabOption)}
+          onSubmit={(data, { notes, description, title }) => {
+            setModalOpen(false);
+            submitData(data, { notes, description, title });
+          }}
+        />
+      )}
+      {existingEventModalOpen && (
+        <OccurrenceModal
+          id="existing-occurrence-modal"
+          key="existing-occurrence-modal"
+          onClose={() => setExistingEventModalOpen(false)}
+          adventureId={params.adventureId}
+          occurrenceType={selectedEventType!}
+          currentEventId={selectedEventId}
+          title={`Edit ${selectedEventType} Event`}
+          onSubmit={(data, { notes, description, title }) => {
+            setModalOpen(false);
+            submitData(data, { notes, description, title });
+          }}
+        />
+      )}
     </div>
   );
 }
