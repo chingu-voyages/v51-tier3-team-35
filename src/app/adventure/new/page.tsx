@@ -10,7 +10,7 @@ import { AdventureService } from "../../services/adventure-service";
 
 export default function NewAdventurePage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [dateRange, setDateRange] = useState<Record<string, Date>>({
     startDate: dayjs().toDate(),
     endDate: dayjs().add(7, "day").toDate(),

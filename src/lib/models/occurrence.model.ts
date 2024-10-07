@@ -6,11 +6,11 @@ type BaseOccurrence = {
   title: string;
   eventType: EventType;
   description?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   createdBy: string;
-  startTime: Date;
-  endTime: Date;
+  startTime?: Date;
+  endTime?: Date;
   notes?: string;
   comments?: UserComment[];
 };
@@ -23,12 +23,25 @@ type AddressBasedOccurence = {
 export type EventType = "travel" | "accommodation" | "activity" | "food";
 
 export type TravelOccurrence = BaseOccurrence & {
-  method: "train" | "plane" | "car" | "bus" | "watercraft";
-  startLocation: Address;
+  method: TravelOccurrenceMethod;
+  startLocation?: Address;
   endLocation?: Address;
 };
 
-export type AccommodationOccurrence = BaseOccurrence & AddressBasedOccurence;
+export enum TravelOccurrenceMethod {
+  Train = "train",
+  Plane = "plane",
+  Car = "car",
+  Bus = "bus",
+  Watercraft = "watercraft",
+}
+
+export type AccommodationOccurrence = BaseOccurrence &
+  AddressBasedOccurence & {
+    accommodationName: string;
+    checkIn: Date;
+    checkOut: Date;
+  };
 
 export type ActivityOccurrence = BaseOccurrence & AddressBasedOccurence;
 export type FoodOccurrence = BaseOccurrence & AddressBasedOccurence;

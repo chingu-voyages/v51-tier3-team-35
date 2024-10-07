@@ -4,7 +4,7 @@ import { fetchUserProfile, updateUserProfile } from "../../services/userService"
 import { useState, useEffect, FormEvent } from "react";
 
 import { User } from "../../../lib/models/user.model";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 
 interface FormValues {
     name: string;
@@ -30,13 +30,32 @@ export default function UserProfile({params}:{ params: { userId: string }}){
         password: '',
       }
 
+      const validate = (values: FormValues) => {
+        const errors: Partial<FormValues> = {};
+        if (!values.name) {
+          errors.name = 'Name is required';
+        }
+        if (values.password.length > 0 && values.password.length < 8) {
+          errors.password = 'Password must be at least 8 characters long';
+        }
+        return errors;
+      };
+
     if (!user) {
         return <div>Loading...</div>;
       }
     console.log("isEditing? ", isEditing);
     
-      const handleSubmit = async (values: FormValues) => {
-        await updateUserProfile(values.name, values.password, id);
+      const handleSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
+        const response = await updateUserProfile(values.name, values.password, id);
+        if (response.status === 200) {
+          setUser((prevUser) => ({
+            ...prevUser!,
+            name: values.name, 
+          }));
+          setIsEditing(false);
+        }
+        actions.setSubmitting(false);
       };
     
       return (
@@ -72,6 +91,7 @@ export default function UserProfile({params}:{ params: { userId: string }}){
           <Formik
             initialValues={initialFormValues}
             enableReinitialize
+            validate={validate}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting }) => (
@@ -114,9 +134,14 @@ export default function UserProfile({params}:{ params: { userId: string }}){
                     type="submit"
                     disabled={isSubmitting}
                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                    onClick={() => setIsEditing(false)}
                   >
                     Save Changes
+                  </button>
+                  <button
+                  type="button"
+                  onClick={()=> setIsEditing(false)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    Cancel
                   </button>
                 </div>
               </Form>
