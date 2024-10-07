@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ActivityOccurrence } from "../../../lib/models/occurrence.model";
 import { AddressAutoComplete } from "../../address-autocomplete/Address-autocomplete";
 import { ActivityOccurrenceSubmitData } from "../definitions";
 import { ModalButtonControls } from "../modal-button-controls/Modal-button-controls";
@@ -6,6 +7,7 @@ import { ModalButtonControls } from "../modal-button-controls/Modal-button-contr
 interface ActivityOccurrenceModalProps {
   onCloseModal: () => void;
   onSubmit: ({ location }: ActivityOccurrenceSubmitData) => void;
+  existingEventData?: ActivityOccurrence;
 }
 export const activityOccurrenceModal = (
   props: ActivityOccurrenceModalProps,
@@ -14,24 +16,21 @@ export const activityOccurrenceModal = (
   const [location, setLocation] =
     useState<google.maps.places.PlaceResult | null>(null);
 
+  useEffect(() => {
+    setLocation(props.existingEventData?.location! as any);
+  }, [props.existingEventData]);
+
   return (
     <div>
+      <h4 className="font-bold text-lg">Address</h4>
       <div className="formatted-address pt-2 pb-2">
-        {/* TODO: fix this so it shows a place name and not just the address */}
-
         {location?.formatted_address || ""}
       </div>
-      <h4 className="font-bold text-lg">Address</h4>
       <AddressAutoComplete
         onPlaceSelected={(place) => {
           setLocation(place);
         }}
       />
-      <div className="formatted-address pt-2 pb-2">
-        {/* TODO: fix this so it shows a place name and not just the address */}
-
-        {location?.formatted_address || ""}
-      </div>
       {children}
       <ModalButtonControls
         onSubmit={() => {

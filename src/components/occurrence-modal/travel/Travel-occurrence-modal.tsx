@@ -21,11 +21,9 @@ export const travelOccurrence = (
   children?: JSX.Element[]
 ) => {
   const [selectedTravelMethod, setSelectedTravelMethod] =
-    useState<TravelOccurrenceMethod | null>(props.existingEventData?.method!);
+    useState<TravelOccurrenceMethod | null>(null);
   const [startAddress, setStartAddress] =
-    useState<google.maps.places.PlaceResult | null>(
-      props.existingEventData?.startLocation as any
-    );
+    useState<google.maps.places.PlaceResult | null>(null);
   const [endAddress, setEndAddress] =
     useState<google.maps.places.PlaceResult | null>(null);
 
