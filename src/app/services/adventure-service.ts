@@ -1,4 +1,5 @@
 import { Adventure } from "../../lib/models/adventure.model";
+import { Occurrence } from "../../lib/models/occurrence.model";
 import { OccurrenceApiPutRequest } from "./definitions";
 
 /**
@@ -78,6 +79,37 @@ export const AdventureService = {
     });
     if (!res.ok) {
       throw new Error("Failed to update adventure");
+    }
+  },
+  getOccurrenceById: async (
+    adventureId: string,
+    occurrenceId: string
+  ): Promise<Occurrence> => {
+    const res = await fetch(
+      `/api/adventure/${adventureId}/occurrence/${occurrenceId}`
+    );
+    if (res.ok) {
+      return await res.json();
+    }
+    throw new Error("Failed to fetch occurrence");
+  },
+  patchOccurrenceById: async (
+    adventureId: string,
+    occurrenceId: string,
+    data: Partial<Occurrence>
+  ): Promise<void> => {
+    const res = await fetch(
+      `/api/adventure/${adventureId}/occurrence/${occurrenceId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to update occurrence");
     }
   },
 };
