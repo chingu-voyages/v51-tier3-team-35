@@ -96,18 +96,23 @@ export default function ViewEditAdventurePage() {
       notes,
       description,
       title,
-    }: { notes?: string; description?: string; title: string }
+    }: { notes?: string; description?: string; title: string },
+    args?: { editing: boolean }
   ) => {
-    await AdventureService.createOccurrence({
-      eventType: activeTabOption,
-      data,
-      startDate: slotStartDate!,
-      endDate: slotEndDate!,
-      adventureId: params.adventureId,
-      notes,
-      description,
-      title,
-    });
+    if (!args?.editing) {
+      await AdventureService.createOccurrence({
+        eventType: activeTabOption,
+        data,
+        startDate: slotStartDate!,
+        endDate: slotEndDate!,
+        adventureId: params.adventureId,
+        notes,
+        description,
+        title,
+      });
+    } else {
+      console.log(data);
+    }
 
     // Refresh the adventure data
     await fetchAdventureById();
@@ -171,7 +176,6 @@ export default function ViewEditAdventurePage() {
           onClose={() => setModalOpen(false)}
           adventureId={params.adventureId}
           occurrenceType={activeTabOption}
-          newEvent={true}
           title={getModalTitleForEventType(activeTabOption)}
           onSubmit={(data, { notes, description, title }) => {
             setModalOpen(false);
@@ -190,7 +194,7 @@ export default function ViewEditAdventurePage() {
           title={`Edit ${selectedEventType} Event`}
           onSubmit={(data, { notes, description, title }) => {
             setModalOpen(false);
-            submitData(data, { notes, description, title });
+            submitData(data, { notes, description, title }, { editing: true });
           }}
         />
       )}
