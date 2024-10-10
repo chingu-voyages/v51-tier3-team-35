@@ -106,7 +106,13 @@ export const AdventureService = {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...data, eventType }),
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+          notes: data.notes,
+          data,
+          eventType,
+        }),
       }
     );
     if (!res.ok) {
