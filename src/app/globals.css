@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-size: 16px;
-}
-
 .pac-container {
   z-index: 1051 !important;
 }
