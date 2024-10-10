@@ -161,7 +161,7 @@ export default function ViewEditAdventurePage() {
           setActiveTabOption(eventType);
         }}
       />
-      <h1 className="text-lg">{adventure?.description}</h1>
+      <h1 className="text-xl mb-4">{adventure?.description}</h1>
       <div>
         <Calendar
           date={currentDate.toDate()}
