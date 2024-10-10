@@ -33,3 +33,25 @@ export async function GET(
     );
   }
 }
+
+
+export async function PUT( req: NextRequest, { params }: { params: { adventureId: string } }){
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  await dbConnect();
+
+  try {
+    const adventure = await AdventureModel.findById(params.adventureId);
+
+    if (!adventure) {
+      return NextResponse.json(
+        { error: `Adventure with id ${params.adventureId} not found` },
+        { status: 404 }
+      );
+    }
+    // Handle the request
+  }
+}
