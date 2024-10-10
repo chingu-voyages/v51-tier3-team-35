@@ -1,6 +1,6 @@
 import { Adventure } from "../../lib/models/adventure.model";
-import { Occurrence } from "../../lib/models/occurrence.model";
-import { OccurrenceApiPutRequest } from "./definitions";
+import { EventType, Occurrence } from "../../lib/models/occurrence.model";
+import { OccurrenceApiWriteRequest } from "./definitions";
 
 /**
  * Fetching adventures for the authenticated user
@@ -60,7 +60,7 @@ export const AdventureService = {
     notes,
     description,
     title,
-  }: OccurrenceApiPutRequest<T>): Promise<void> {
+  }: OccurrenceApiWriteRequest<T>): Promise<void> {
     const res = await fetch(`/api/adventure/${adventureId}/occurrence`, {
       method: "PUT",
       headers: {
@@ -96,6 +96,7 @@ export const AdventureService = {
   patchOccurrenceById: async (
     adventureId: string,
     occurrenceId: string,
+    eventType: EventType,
     data: Partial<Occurrence>
   ): Promise<void> => {
     const res = await fetch(
@@ -105,7 +106,7 @@ export const AdventureService = {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, eventType }),
       }
     );
     if (!res.ok) {

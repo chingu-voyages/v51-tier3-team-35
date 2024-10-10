@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "../../../../../../lib/mongodb/mongodb";
 import { AdventureModel } from "../../../../../../lib/schemas/adventure.schema";
 import authOptions from "../../../../auth/auth-options";
+import { OccurrencePatchRequestHandlerFactory } from "../../../../lib/request-handler-factory";
 
 export async function GET(
   req: NextRequest,
@@ -36,5 +37,53 @@ export async function GET(
     return NextResponse.json(occurrence, { status: 200 });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { adventureId: string; occurrenceId: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const requestBody = await req.json();
+  console.info("req.body", requestBody);
+
+  // Find the occurrence
+  await dbConnect();
+
+  try {
+    const adventure = await AdventureModel.findOne({
+      _id: params.adventureId,
+      "occurrences._id": params.occurrenceId,
+    });
+    if (!adventure)
+      return NextResponse.json(
+        { error: "Adventure not found" },
+        { status: 404 }
+      );
+
+    const occurenceToPatch = adventure.occurrences.find(
+      (o) => o._id?.toString() === params.occurrenceId
+    );
+    if (!occurenceToPatch)
+      return NextResponse.json(
+        { error: "Occurrence not found" },
+        { status: 404 }
+      );
+
+    // Handle the request
+    await OccurrencePatchRequestHandlerFactory.update(
+      requestBody.eventType
+    ).handle(session.user!._id, adventure, occurenceToPatch, requestBody);
+    return NextResponse.json(
+      { message: `Patch request successful` },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
