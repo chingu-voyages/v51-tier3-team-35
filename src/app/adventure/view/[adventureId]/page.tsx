@@ -76,19 +76,6 @@ export default function ViewEditAdventurePage() {
     []
   );
 
-  const getModalTitleForEventType = (occurrenceType: EventType) => {
-    switch (occurrenceType) {
-      case "travel":
-        return "New Travel Event";
-      case "accommodation":
-        return "New Accommodation Event";
-      case "activity":
-        return "New Activity Event";
-      case "food":
-        return "New Food Event";
-    }
-  };
-
   // Here is where we send the post request to the server
   const submitData = async (
     data: OccurrenceSubmissionData,
@@ -111,7 +98,18 @@ export default function ViewEditAdventurePage() {
         title,
       });
     } else {
-      console.log(data);
+      const submissionData = { ...data, notes, title, description };
+      try {
+        await AdventureService.patchOccurrenceById(
+          params.adventureId,
+          selectedEventId!,
+          selectedEventType!,
+          submissionData
+        );
+        console.log("Submitting data: ", submissionData);
+      } catch (error: any) {
+        console.error(error);
+      }
     }
 
     // Refresh the adventure data
@@ -176,7 +174,7 @@ export default function ViewEditAdventurePage() {
           onClose={() => setModalOpen(false)}
           adventureId={params.adventureId}
           occurrenceType={activeTabOption}
-          title={getModalTitleForEventType(activeTabOption)}
+          title={`New ${selectedEventId} event`}
           onSubmit={(data, { notes, description, title }) => {
             setModalOpen(false);
             submitData(data, { notes, description, title });
@@ -191,7 +189,7 @@ export default function ViewEditAdventurePage() {
           adventureId={params.adventureId}
           occurrenceType={selectedEventType!}
           currentEventId={selectedEventId}
-          title={`Edit ${selectedEventType} Event`}
+          title={`Edit ${selectedEventType} event`}
           onSubmit={(data, { notes, description, title }) => {
             setModalOpen(false);
             submitData(data, { notes, description, title }, { editing: true });
