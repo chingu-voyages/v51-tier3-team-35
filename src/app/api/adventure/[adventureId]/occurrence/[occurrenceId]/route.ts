@@ -50,8 +50,6 @@ export async function PATCH(
   }
 
   const requestBody = await req.json();
-  console.info("req.body", requestBody);
-
   // Find the occurrence
   await dbConnect();
 
