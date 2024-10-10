@@ -3,24 +3,22 @@ import {
   ActivityOccurrenceSubmitData,
   FoodOccurrenceSubmitData,
   TravelOccurrenceSubmitData,
-} from "../../../../components/occurrence-modal/definitions";
+} from "../../../../../components/occurrence-modal/definitions";
 import {
   AccommodationOccurrence,
   ActivityOccurrence,
   TravelOccurrence,
-} from "../../../../lib/models/occurrence.model";
-import { OccurrenceApiPutRequest } from "../../../services/definitions";
-import {
-  AdventureDocument,
-  BaseOccurrencePutRequestHandler,
-} from "./base-occurrence-put-request-handler";
+} from "../../../../../lib/models/occurrence.model";
+import { OccurrenceApiWriteRequest } from "../../../../services/definitions";
+import { AdventureDocument } from "../definitions";
+import { BaseOccurrencePutRequestHandler } from "./base-occurrence-put-request-handler";
 
 export const TravelOccurrenceApiPutRequestHandler: BaseOccurrencePutRequestHandler<TravelOccurrenceSubmitData> =
   {
     handle: async (
       userId: string,
       adventureDocument: AdventureDocument,
-      requestBody: OccurrenceApiPutRequest<TravelOccurrenceSubmitData>
+      requestBody: OccurrenceApiWriteRequest<TravelOccurrenceSubmitData>
     ): Promise<AdventureDocument> => {
       // Get the start and end date ranges for the calendar
       const { startDate, endDate, eventType, data, description, title, notes } =
@@ -64,7 +62,7 @@ export const AccommodationOccurrenceApiPutRequestHandler: BaseOccurrencePutReque
     handle: async (
       userId: string,
       adventureDocument: AdventureDocument,
-      requestBody: OccurrenceApiPutRequest<AccommodationOccurrenceSubmitData>
+      requestBody: OccurrenceApiWriteRequest<AccommodationOccurrenceSubmitData>
     ) => {
       const { startDate, endDate, data, notes, title } = requestBody;
 
@@ -99,7 +97,7 @@ export const ActivityOccurrenceApiPutRequestHandler: BaseOccurrencePutRequestHan
     handle: async (
       userId: string,
       adventureDocument: AdventureDocument,
-      requestBody: OccurrenceApiPutRequest<ActivityOccurrenceSubmitData>
+      requestBody: OccurrenceApiWriteRequest<ActivityOccurrenceSubmitData>
     ) => {
       const { startDate, endDate, data, description, notes, title } =
         requestBody;
