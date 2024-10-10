@@ -93,7 +93,9 @@ export default function HomePage() {
         </div>
       </div>
       {isLoading && (
-        <span className="loading loading-spinner loading-lg"></span>
+        <div className="flex justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
       )}
     </div>
   );
