@@ -35,9 +35,24 @@ export default function ViewEditAdventurePage() {
   const [eventOccurrences, setEventOccurrences] = useState<
     ReactBigCalendarEvent[]
   >([]);
+
+  const [toastVisible, setToastVisible] = useState(false);
+
   useEffect(() => {
     fetchAdventureById();
   }, []);
+
+  useEffect(() => {
+    if (toastVisible) {
+      const timer = setTimeout(() => {
+        setToastVisible(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [toastVisible]);
 
   const localizer = dayjsLocalizer(dayjs);
 
@@ -98,15 +113,14 @@ export default function ViewEditAdventurePage() {
         title,
       });
     } else {
-      const submissionData = { ...data, notes, title, description };
       try {
         await AdventureService.patchOccurrenceById(
           params.adventureId,
           selectedEventId!,
           selectedEventType!,
-          submissionData
+          { notes, title, description, ...data }
         );
-        console.log("Submitting data: ", submissionData);
+        setToastVisible(true);
       } catch (error: any) {
         console.error(error);
       }
@@ -147,8 +161,7 @@ export default function ViewEditAdventurePage() {
           setActiveTabOption(eventType);
         }}
       />
-      <h1>View edit an adventure with id {params.adventureId}</h1>
-      <h1>{adventure?.description}</h1>
+      <h1 className="text-lg">{adventure?.description}</h1>
       <div>
         <Calendar
           date={currentDate.toDate()}
@@ -191,10 +204,17 @@ export default function ViewEditAdventurePage() {
           currentEventId={selectedEventId}
           title={`Edit ${selectedEventType} event`}
           onSubmit={(data, { notes, description, title }) => {
-            setModalOpen(false);
+            setExistingEventModalOpen(false);
             submitData(data, { notes, description, title }, { editing: true });
           }}
         />
+      )}
+      {toastVisible && (
+        <div className="toast toast-end opacity-60">
+          <div className="alert alert-success">
+            <span>Successfully updated.</span>
+          </div>
+        </div>
       )}
     </div>
   );
