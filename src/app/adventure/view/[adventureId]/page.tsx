@@ -11,43 +11,48 @@ import { OccurrenceToolbar } from "../../../../components/occurrence-toolbar/Occ
 import { Adventure } from "../../../../lib/models/adventure.model";
 import { EventType } from "../../../../lib/models/occurrence.model";
 import { AdventureService } from "../../../services/adventure-service";
+import { ReactBigCalendarEvent } from "../definitions/definitions";
+import { adaptToReactBigCalendarEvent } from "../utils/adapt-to-big-calendar";
 
-interface EventOccurrenceData {
-  _id: string;
-  title: string;
-  start: Date;
-  end: Date;
-}
 export default function ViewEditAdventurePage() {
   const params = useParams<{ adventureId: string }>();
-  const [currentDate, setCurrentDate] = useState(dayjs("2024-09-22"));
+  const [currentDate, setCurrentDate] = useState(dayjs());
   const [adventure, setAdventure] = useState<Adventure | null>(null);
   const [activeTabOption, setActiveTabOption] = useState<EventType>("travel");
+
   const [modalOpen, setModalOpen] = useState(false);
+  const [existingEventModalOpen, setExistingEventModalOpen] = useState(false);
+
   const [slotStartDate, setSlotStartDate] = useState<Date | null>(null);
   const [slotEndDate, setSlotEndDate] = useState<Date | null>(null);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [selectedEventType, setSelectedEventType] = useState<EventType | null>(
+    null
+  );
   const router = useRouter();
   const { status } = useSession();
 
   const [eventOccurrences, setEventOccurrences] = useState<
-    EventOccurrenceData[]
-  >([
-    {
-      _id: "3",
-      title: "Direct Object",
-      start: dayjs().hour(4).minute(0).toDate(),
-      end: dayjs().hour(5).minute(0).toDate(),
-    },
-    {
-      _id: "4",
-      title: "Test2",
-      start: dayjs().add(1, "day").hour(4).minute(0).toDate(),
-      end: dayjs().add(1, "day").hour(5).minute(0).toDate(),
-    },
-  ]);
+    ReactBigCalendarEvent[]
+  >([]);
+
+  const [toastVisible, setToastVisible] = useState(false);
+
   useEffect(() => {
     fetchAdventureById();
   }, []);
+
+  useEffect(() => {
+    if (toastVisible) {
+      const timer = setTimeout(() => {
+        setToastVisible(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [toastVisible]);
 
   const localizer = dayjsLocalizer(dayjs);
 
@@ -58,6 +63,10 @@ export default function ViewEditAdventurePage() {
       );
 
       setAdventure(result);
+      const mappedEvents = result.occurrences.map((occurrence) =>
+        adaptToReactBigCalendarEvent(occurrence)
+      );
+      setEventOccurrences(mappedEvents);
     } catch (error) {
       // TODO: Redirect to an error page?
       console.error(error);
@@ -65,7 +74,12 @@ export default function ViewEditAdventurePage() {
   };
 
   const handleSelectEvent = useCallback((event: any) => {
-    console.log(event);
+    // TODO: Fix any type
+    if (event._id) {
+      setSelectedEventId(event._id);
+      setSelectedEventType(event.eventType);
+      setExistingEventModalOpen(true);
+    }
   }, []);
 
   const handleSelectSlot = useCallback(
@@ -84,18 +98,36 @@ export default function ViewEditAdventurePage() {
       notes,
       description,
       title,
-    }: { notes?: string; description?: string; title: string }
+    }: { notes?: string; description?: string; title: string },
+    args?: { editing: boolean }
   ) => {
-    await AdventureService.createOccurrence({
-      eventType: activeTabOption,
-      data,
-      startDate: slotStartDate!,
-      endDate: slotEndDate!,
-      adventureId: params.adventureId,
-      notes,
-      description,
-      title,
-    });
+    if (!args?.editing) {
+      await AdventureService.createOccurrence({
+        eventType: activeTabOption,
+        data,
+        startDate: slotStartDate!,
+        endDate: slotEndDate!,
+        adventureId: params.adventureId,
+        notes,
+        description,
+        title,
+      });
+    } else {
+      try {
+        await AdventureService.patchOccurrenceById(
+          params.adventureId,
+          selectedEventId!,
+          selectedEventType!,
+          { notes, title, description, ...data }
+        );
+        setToastVisible(true);
+      } catch (error: any) {
+        console.error(error);
+      }
+    }
+
+    // Refresh the adventure data
+    await fetchAdventureById();
   };
 
   const handleNavigate = (date: Date, view: string, action: string) => {
@@ -129,8 +161,7 @@ export default function ViewEditAdventurePage() {
           setActiveTabOption(eventType);
         }}
       />
-      <h1>View edit an adventure with id {params.adventureId}</h1>
-      <h1>{adventure?.description}</h1>
+      <h1 className="text-xl mb-4">{adventure?.description}</h1>
       <div>
         <Calendar
           date={currentDate.toDate()}
@@ -146,18 +177,45 @@ export default function ViewEditAdventurePage() {
           onView={(view) => console.log(view)}
           style={{ height: 800 }}
           selectable
+          startAccessor={"start"}
         />
       </div>
-      <OccurrenceModal
-        id="ocmodal"
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        occurrenceType={activeTabOption}
-        onSubmit={(data, { notes, description, title }) => {
-          setModalOpen(false);
-          submitData(data, { notes, description, title });
-        }}
-      />
+      {modalOpen && (
+        <OccurrenceModal
+          id="create-occurrence-modal"
+          key="create-occurrence-modal"
+          onClose={() => setModalOpen(false)}
+          adventureId={params.adventureId}
+          occurrenceType={activeTabOption}
+          title={`New ${selectedEventId} event`}
+          onSubmit={(data, { notes, description, title }) => {
+            setModalOpen(false);
+            submitData(data, { notes, description, title });
+          }}
+        />
+      )}
+      {existingEventModalOpen && (
+        <OccurrenceModal
+          id="existing-occurrence-modal"
+          key="existing-occurrence-modal"
+          onClose={() => setExistingEventModalOpen(false)}
+          adventureId={params.adventureId}
+          occurrenceType={selectedEventType!}
+          currentEventId={selectedEventId}
+          title={`Edit ${selectedEventType} event`}
+          onSubmit={(data, { notes, description, title }) => {
+            setExistingEventModalOpen(false);
+            submitData(data, { notes, description, title }, { editing: true });
+          }}
+        />
+      )}
+      {toastVisible && (
+        <div className="toast toast-end opacity-60">
+          <div className="alert alert-success">
+            <span>Successfully updated.</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

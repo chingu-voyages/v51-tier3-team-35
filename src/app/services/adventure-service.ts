@@ -1,5 +1,6 @@
 import { Adventure } from "../../lib/models/adventure.model";
-import { OccurrenceApiPutRequest } from "./definitions";
+import { EventType, Occurrence } from "../../lib/models/occurrence.model";
+import { OccurrenceApiWriteRequest } from "./definitions";
 
 /**
  * Fetching adventures for the authenticated user
@@ -59,7 +60,7 @@ export const AdventureService = {
     notes,
     description,
     title,
-  }: OccurrenceApiPutRequest<T>): Promise<void> {
+  }: OccurrenceApiWriteRequest<T>): Promise<void> {
     const res = await fetch(`/api/adventure/${adventureId}/occurrence`, {
       method: "PUT",
       headers: {
@@ -78,6 +79,44 @@ export const AdventureService = {
     });
     if (!res.ok) {
       throw new Error("Failed to update adventure");
+    }
+  },
+  getOccurrenceById: async (
+    adventureId: string,
+    occurrenceId: string
+  ): Promise<Occurrence> => {
+    const res = await fetch(
+      `/api/adventure/${adventureId}/occurrence/${occurrenceId}`
+    );
+    if (res.ok) {
+      return await res.json();
+    }
+    throw new Error("Failed to fetch occurrence");
+  },
+  patchOccurrenceById: async (
+    adventureId: string,
+    occurrenceId: string,
+    eventType: EventType,
+    data: Partial<Occurrence>
+  ): Promise<void> => {
+    const res = await fetch(
+      `/api/adventure/${adventureId}/occurrence/${occurrenceId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: data.title,
+          description: data.description,
+          notes: data.notes,
+          data,
+          eventType,
+        }),
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to update occurrence");
     }
   },
 };

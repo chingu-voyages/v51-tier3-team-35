@@ -1,4 +1,5 @@
 "use client";
+import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,6 +12,7 @@ export default function HomePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [userAdventures, setUserAdventures] = useState<Adventure[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchAdventuresByUser();
@@ -18,10 +20,13 @@ export default function HomePage() {
 
   const fetchAdventuresByUser = async () => {
     try {
+      setIsLoading(true);
       const result = await AdventureService.getAdventuresByUser();
       setUserAdventures(result);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,13 +66,25 @@ export default function HomePage() {
               {userAdventures.map((adventure) => (
                 <tr key={adventure._id}>
                   <td>
-                    <h3>{adventure.name}</h3>
-                    <p>{adventure.description}</p>
-                  </td>
-                  <td>
-                    <Link href={`/adventure/view/${adventure._id}`}>
-                      <button className="btn btn-secondary">View</button>
-                    </Link>
+                    <div className="flex justify-between opacity-75 hover:opacity-100">
+                      <Link
+                        href={`/adventure/view/${adventure._id}`}
+                        aria-disabled={isLoading}
+                        onClick={() => {
+                          setIsLoading(true);
+                        }}
+                        className={` w-full ${
+                          isLoading ? "disabled pointer-events-none" : ""
+                        }`}
+                      >
+                        <h3 className="text-lg font-bold">{adventure.name}</h3>
+                        <p>{adventure.description}</p>
+                        <p>
+                          Created{" "}
+                          {dayjs(adventure.createdAt).format("YYYY-MMM-DD")}
+                        </p>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -75,6 +92,11 @@ export default function HomePage() {
           </table>
         </div>
       </div>
+      {isLoading && (
+        <div className="flex justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      )}
     </div>
   );
 }

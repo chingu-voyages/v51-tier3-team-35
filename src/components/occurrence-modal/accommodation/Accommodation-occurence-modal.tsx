@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
+import { AccommodationOccurrence } from "../../../lib/models/occurrence.model";
 import { AddressAutoComplete } from "../../address-autocomplete/Address-autocomplete";
 import { AccommodationOccurrenceSubmitData } from "../definitions";
 import { ModalButtonControls } from "../modal-button-controls/Modal-button-controls";
@@ -12,6 +13,7 @@ interface AccommodationModalProps {
     location,
     accommodationName,
   }: AccommodationOccurrenceSubmitData) => void;
+  existingEventData?: AccommodationOccurrence;
 }
 
 export const accommodationOccurrence = (
@@ -19,7 +21,9 @@ export const accommodationOccurrence = (
   children?: JSX.Element[]
 ) => {
   const [location, setLocation] =
-    useState<google.maps.places.PlaceResult | null>(null);
+    useState<google.maps.places.PlaceResult | null>(
+      props.existingEventData?.location! as any
+    );
 
   const [dateRange, setDateRange] = useState<Record<string, Date>>({
     checkIn: dayjs().minute(0).toDate(),
@@ -27,6 +31,16 @@ export const accommodationOccurrence = (
   });
 
   const [accommodationName, setAccommodationName] = useState<string>("");
+
+  // Load any existing data
+  useEffect(() => {
+    setLocation(props.existingEventData?.location! as any);
+    setDateRange({
+      checkIn: dayjs(props.existingEventData?.checkIn!).toDate(),
+      checkOut: dayjs(props.existingEventData?.checkOut!).toDate(),
+    });
+    setAccommodationName(props.existingEventData?.accommodationName!);
+  }, [props.existingEventData]);
 
   const handleCalendarChange = (e: any, controlName: string) => {
     // Validate so that the start date is before the end date
@@ -53,12 +67,12 @@ export const accommodationOccurrence = (
           onChange={(e) => setAccommodationName(e.target.value)}
         />
 
+        <h4 className="font-bold text-lg">Address</h4>
         <div className="formatted-address pt-2 pb-2">
           {/* TODO: fix this so it shows a place name and not just the address */}
 
           {location?.formatted_address || ""}
         </div>
-        <h4 className="font-bold text-lg">Address</h4>
         <AddressAutoComplete
           onPlaceSelected={(place) => {
             setLocation(place);

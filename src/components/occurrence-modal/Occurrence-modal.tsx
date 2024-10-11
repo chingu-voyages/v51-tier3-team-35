@@ -1,6 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import { EventType } from "../../lib/models/occurrence.model";
+import { AdventureService } from "../../app/services/adventure-service";
+import {
+  AccommodationOccurrence,
+  ActivityOccurrence,
+  EventType,
+  FoodOccurrence,
+  Occurrence,
+  TravelOccurrence,
+} from "../../lib/models/occurrence.model";
 import { accommodationOccurrence } from "./accommodation/Accommodation-occurence-modal";
 import { activityOccurrenceModal } from "./activity/Activity-occurrence-modal";
 import { OccurrenceSubmissionData } from "./definitions";
@@ -9,8 +17,10 @@ import { travelOccurrence } from "./travel/Travel-occurrence-modal";
 
 interface OccurrenceModalProps {
   id: string;
+  title: string;
   occurrenceType: EventType; // Events and occurrences are the same thing.
-  isOpen: boolean;
+  adventureId: string;
+  currentEventId?: string | null;
   onClose: () => void;
   onSubmit?: (
     data: OccurrenceSubmissionData,
@@ -25,23 +35,10 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   /* 
   Travel occurrence state
   */
-
   const handleDataSubmit = (data: OccurrenceSubmissionData) => {
     props.onSubmit && props.onSubmit(data, { notes, description, title });
   };
 
-  const getModalTitleForEventType = (occurrenceType: EventType) => {
-    switch (occurrenceType) {
-      case "travel":
-        return "New Travel Event";
-      case "accommodation":
-        return "New Accommodation Event";
-      case "activity":
-        return "New Activity Event";
-      case "food":
-        return "New Food Event";
-    }
-  };
   const getModalForEventType = (occurrenceType: EventType) => {
     switch (occurrenceType) {
       case "travel":
@@ -49,6 +46,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
           {
             onCloseModal: props.onClose,
             onSubmit: handleDataSubmit,
+            existingEventData: existingEventData as TravelOccurrence,
           },
           [
             <FreeTextSection
@@ -70,6 +68,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
           {
             onCloseModal: props.onClose,
             onSubmit: handleDataSubmit,
+            existingEventData: existingEventData as AccommodationOccurrence,
           },
           [
             <FreeTextSection
@@ -91,6 +90,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
           {
             onCloseModal: props.onClose,
             onSubmit: handleDataSubmit,
+            existingEventData: existingEventData as ActivityOccurrence,
           },
           [
             <FreeTextSection
@@ -112,6 +112,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
           {
             onCloseModal: props.onClose,
             onSubmit: handleDataSubmit,
+            existingEventData: existingEventData as FoodOccurrence,
           },
           [
             <FreeTextSection
@@ -131,26 +132,45 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
     }
   };
 
-  if (!props.isOpen) {
-    return null;
-  }
-
   const [notes, setNotes] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [title, setTitle] = useState<string>("");
+  const [existingEventData, setExistingEventData] = useState<Occurrence | null>(
+    null
+  );
+
+  useEffect(() => {
+    const fetchExistingOccurrence = async () => {
+      // Fetch the event data from the server
+      const res = await AdventureService.getOccurrenceById(
+        props.adventureId,
+        props.currentEventId!
+      );
+
+      setTitle(res.title);
+      setDescription(res.description || "");
+      setNotes(res.notes || "");
+      setExistingEventData(res);
+    };
+    if (props.currentEventId && props.adventureId) {
+      fetchExistingOccurrence();
+    }
+  }, [props.currentEventId, props.adventureId]);
+
   return (
-    <div className={`absolute w-full top-[0] modal-container`}>
-      <div className="modal-box w-11/12 max-w-5xl">
+    <div
+      key={props.occurrenceType}
+      className={`absolute w-full top-[0] modal-container`}
+    >
+      <div className="modal-box w-full max-w-[800px] lg:ml-[30%]">
         {/* Modal title */}
-        <h3 className="font-bold text-2xl mb-4">
-          {getModalTitleForEventType(props.occurrenceType)}
-        </h3>
+        <h3 className="font-bold text-2xl mb-4">{props.title}</h3>
         <div>
           {/* Render a title input text field for all modal types */}
           <h4 className="font-bold text-lg">Title</h4>
           <input
             type="text"
-            className="input input-bordered w-full"
+            className="input input-bordered w-full mb-4"
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
