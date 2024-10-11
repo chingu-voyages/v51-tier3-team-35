@@ -119,4 +119,19 @@ export const AdventureService = {
       throw new Error("Failed to update occurrence");
     }
   },
+  addUserToAdventure: async (
+    adventureId: string, 
+    userId: string
+  ): Promise<void> => {
+    const res = await fetch(`/api/adventure/${adventureId}`, {
+      method: "Patch",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to add user to adventure");
+    }
+  }
 };
