@@ -113,7 +113,7 @@ export default function NewAdventurePage() {
                   name="name"
                   onChange={handleChange}
                   value={values.name}
-                  placeholder="Event Name"
+                  placeholder="Name"
                   maxLength={50}
                   disabled={isSubmitting}
                   onBlur={handleBlur}
@@ -158,7 +158,7 @@ export default function NewAdventurePage() {
                   <div className="text-orange-600">{dateError}</div>
                 )}
               </div>
-              <div>
+              <div className="mt-4 flex justify-center">
                 <button
                   type="submit"
                   className="btn btn-primary"

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "../../../../../lib/mongodb/mongodb";
 import { AdventureModel } from "../../../../../lib/schemas/adventure.schema";
 import authOptions from "../../../auth/auth-options";
-import { OccurrencePutRequestHandlerFactory } from "../../../lib/occurrence-put-request-handler-factory";
+import { OccurrencePutRequestHandlerFactory } from "../../../lib/request-handler-factory";
 
 export async function PUT(
   req: NextRequest,

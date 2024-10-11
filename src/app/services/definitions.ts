@@ -1,6 +1,6 @@
 import { EventType } from "../../lib/models/occurrence.model";
 
-export type OccurrenceApiPutRequest<T> = {
+export type OccurrenceApiWriteRequest<T> = {
   eventType: EventType;
   startDate?: Date;
   endDate?: Date;

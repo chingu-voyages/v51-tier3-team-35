@@ -1,5 +1,8 @@
-import { useState } from "react";
-import { TravelOccurrenceMethod } from "../../../lib/models/occurrence.model";
+import { useEffect, useState } from "react";
+import {
+  TravelOccurrence,
+  TravelOccurrenceMethod,
+} from "../../../lib/models/occurrence.model";
 import { AddressAutoComplete } from "../../address-autocomplete/Address-autocomplete";
 import { TravelOccurrenceSubmitData } from "../definitions";
 import { ModalButtonControls } from "../modal-button-controls/Modal-button-controls";
@@ -11,6 +14,7 @@ interface TravelOccurrenceModalProps {
     startLocation,
     endLocation,
   }: TravelOccurrenceSubmitData) => void;
+  existingEventData?: TravelOccurrence;
 }
 export const travelOccurrence = (
   props: TravelOccurrenceModalProps,
@@ -23,11 +27,16 @@ export const travelOccurrence = (
   const [endAddress, setEndAddress] =
     useState<google.maps.places.PlaceResult | null>(null);
 
+  useEffect(() => {
+    setSelectedTravelMethod(props.existingEventData?.method!);
+    setStartAddress(props.existingEventData?.startLocation as any);
+    setEndAddress(props.existingEventData?.endLocation as any);
+  }, [props.existingEventData]);
+
   return (
     <div>
       <div>
         <h4 className="font-bold text-lg">Travel Method</h4>
-
         {Object.keys(TravelOccurrenceMethod).map((method) => {
           return (
             <div className="form-control pt-2 pb-2" key={method}>
@@ -39,6 +48,10 @@ export const travelOccurrence = (
                     name="method"
                     value={selectedTravelMethod as string}
                     className="w-[20px]"
+                    checked={
+                      (TravelOccurrenceMethod as any)[method] ===
+                      selectedTravelMethod
+                    }
                     onChange={() => {
                       setSelectedTravelMethod(
                         (TravelOccurrenceMethod as any)[method]
