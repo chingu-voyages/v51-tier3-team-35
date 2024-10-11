@@ -47,8 +47,9 @@ export async function GET(
 }
 
 
-export async function PUT( req: NextRequest, { params }: { params: { adventureId: string } }){
+export async function PATCH( req: NextRequest, { params }: { params: { adventureId: string } }){
   const session = await getServerSession(authOptions);
+  const data = await req.json();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -64,6 +65,16 @@ export async function PUT( req: NextRequest, { params }: { params: { adventureId
         { status: 404 }
       );
     }
+    
+    adventure.participants.push(data.userId);
+    await adventure.save();
+    
+    return NextResponse.json({ message: "User added successfully" }, { status: 200 });
     // Handle the request
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: `Failed to add adventure user: ${error}` },
+      { status: 500 }
+    );
   }
 }
