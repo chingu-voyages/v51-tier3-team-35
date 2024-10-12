@@ -7,11 +7,11 @@ export default function NavBar() {
   const { data: session, status } = useSession();
   const router = useRouter();
   return (
-    <nav className="navbar bg-base-100 shadow-md">
-      <div className="container mx-auto flex justify-between items-center">
-        <div className="flex items-center">
+    <nav className="bg-base-100 shadow-md flex justify-between w-full p-4">
+      <div className="flex justify-between w-full">
+        <div className="self-center">
           <Link href="/" className="text-2xl font-bold">
-            Adventure Canvas
+            TravelIt ✈️
           </Link>
         </div>
         {status === "authenticated" && (
