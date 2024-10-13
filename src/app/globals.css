@@ -12,3 +12,8 @@
   width: 100vw;
   z-index: 1050 !important;
 }
+
+div.react-datepicker__input-container input {
+  padding: 8px;
+  border-radius: 0.5rem;
+}
