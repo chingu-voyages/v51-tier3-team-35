@@ -32,7 +32,7 @@ export default function RootLayout({
       >
         <NextAuthProvider>
           <NavBar />
-          <div className="lg:ml-[10%] lg:mr-[10%]">{children}</div>
+          <div>{children}</div>
         </NextAuthProvider>
       </body>
     </html>
