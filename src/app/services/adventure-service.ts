@@ -51,6 +51,22 @@ export const AdventureService = {
     throw new Error("Failed to create adventure");
   },
 
+  async patchAdventureById(
+    id: string,
+    { description }: Partial<Adventure>
+  ): Promise<void> {
+    const res = await fetch(`/api/adventure/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ description }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to update adventure");
+    }
+  },
+
   async createOccurrence<T>({
     eventType,
     data,
@@ -117,6 +133,25 @@ export const AdventureService = {
     );
     if (!res.ok) {
       throw new Error("Failed to update occurrence");
+    }
+  },
+  putComment: async (
+    adventureId: string,
+    occurrenceId: string,
+    text: string
+  ): Promise<void> => {
+    const res = await fetch(
+      `/api/adventure/${adventureId}/occurrence/${occurrenceId}/comment`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to add comment");
     }
   },
 };

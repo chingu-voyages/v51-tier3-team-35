@@ -45,3 +45,41 @@ export async function GET(
     );
   }
 }
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { adventureId: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const requestBody = await req.json();
+
+  const { description } = requestBody;
+
+  await dbConnect();
+  try {
+    const adventure = await AdventureModel.findByIdAndUpdate(
+      params.adventureId,
+      { description }
+    );
+
+    if (!adventure) {
+      return NextResponse.json(
+        { error: `Adventure with id ${params.adventureId} not found` },
+        { status: 404 }
+      );
+    }
+    return NextResponse.json(
+      { message: "Adventure properties were patched successfully" },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: `Failed to update adventure: ${error}` },
+      { status: 500 }
+    );
+  }
+}
