@@ -287,7 +287,6 @@ export default function ViewEditAdventurePage() {
           adventureId={params.adventureId}
           occurrenceType={activeTabOption}
           title={`New ${selectedEventId} event`}
-          newEvent
           onSubmit={(data, { notes, description, title }) => {
             setModalOpen(false);
             submitData(data, { notes, description, title });
