@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { MdOutlineModeEdit } from "react-icons/md";
 import { OccurrenceSubmissionData } from "../../../../components/occurrence-modal/definitions";
 import { OccurrenceModal } from "../../../../components/occurrence-modal/Occurrence-modal";
 import { OccurrenceToolbar } from "../../../../components/occurrence-toolbar/Occurrence-toolbar";
@@ -37,7 +38,13 @@ export default function ViewEditAdventurePage() {
   >([]);
 
   const [toastVisible, setToastVisible] = useState(false);
+  const [isEditingOccurrenceDesc, setIsEditingOccurrenceDesc] = useState(false);
+  const [
+    adventureDescriptionEditableText,
+    setAdventureDescriptionEditableText,
+  ] = useState("");
 
+  const [isBusy, setIsBusy] = useState(false);
   useEffect(() => {
     fetchAdventureById();
   }, []);
@@ -53,6 +60,10 @@ export default function ViewEditAdventurePage() {
       };
     }
   }, [toastVisible]);
+
+  useEffect(() => {
+    setAdventureDescriptionEditableText(adventure?.description ?? "");
+  }, [adventure?.description]);
 
   const localizer = dayjsLocalizer(dayjs);
 
@@ -146,6 +157,22 @@ export default function ViewEditAdventurePage() {
     }
   };
 
+  const handleUpdateOccDescription = async () => {
+    // Send request to patch the adventure description
+    try {
+      setIsBusy(true);
+      await AdventureService.patchAdventureById(params.adventureId, {
+        description: adventureDescriptionEditableText,
+      });
+      setToastVisible(true);
+      setIsEditingOccurrenceDesc(false);
+      await fetchAdventureById();
+      setIsBusy(false);
+    } catch (error: any) {
+      console.error(error);
+    }
+  };
+
   if (status === "unauthenticated") {
     // Only authenticated users can access this page
     router.replace("/signin");
@@ -153,7 +180,7 @@ export default function ViewEditAdventurePage() {
   }
   // This is a placeholder to get basic functionality working
   return (
-    <div>
+    <div className="p-4">
       <OccurrenceToolbar
         onTabChange={(eventType: EventType) => {
           // We set the current active option to the selected tab
@@ -161,7 +188,45 @@ export default function ViewEditAdventurePage() {
           setActiveTabOption(eventType);
         }}
       />
-      <h1 className="text-xl mb-4">{adventure?.description}</h1>
+      <div className="p-4 mb-4">
+        {/* Event description - editable */}
+        {!isEditingOccurrenceDesc ? (
+          <div
+            className="flex gap-2 hover:cursor-pointer"
+            onClick={() => setIsEditingOccurrenceDesc(true)}
+          >
+            <h1 className="text-xl mb-4">{adventure?.description}</h1>
+            <MdOutlineModeEdit className="text-2xl" />
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <input
+              className="w-[300px] px-2"
+              type="text"
+              value={adventureDescriptionEditableText}
+              onChange={(e) =>
+                setAdventureDescriptionEditableText(e.target.value)
+              }
+              maxLength={80}
+            />
+            <button
+              disabled={isBusy}
+              className="btn"
+              onClick={handleUpdateOccDescription}
+            >
+              Update
+            </button>
+            <button
+              className="btn btn-error"
+              onClick={() => {
+                setIsEditingOccurrenceDesc(false);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+      </div>
       <div>
         <Calendar
           date={currentDate.toDate()}
