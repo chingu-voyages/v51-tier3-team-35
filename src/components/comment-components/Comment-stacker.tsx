@@ -36,7 +36,7 @@ export function CommentsContainer({
             maxLength={100}
           />
           <button
-            className="btn btn-primary"
+            className="btn btn-ghost"
             onClick={() => {
               onSubmit && onSubmit(commentText);
               setCommentText("");

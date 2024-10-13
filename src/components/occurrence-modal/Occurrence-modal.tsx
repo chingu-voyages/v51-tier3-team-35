@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { AdventureService } from "../../app/services/adventure-service";
-import { fetchUserProfile } from "../../app/services/userService";
 import {
   AccommodationOccurrence,
   ActivityOccurrence,
@@ -64,6 +63,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               placeholder="Notes"
               setText={setNotes}
             />,
+
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
@@ -175,19 +175,18 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   const fetchUserNames = async (
     occurrence: Occurrence
   ): Promise<Record<string, string>> => {
-    const idNameDictionary = {} as Record<string, string>;
+    // Extract the user ids from the comments and put them into a set
 
-    const res = await Promise.allSettled(
-      occurrence.userComments!.map((c) => fetchUserProfile(c.createdBy))
+    const userIds = extractUserIds(occurrence);
+
+    if (userIds.length === 0) return {};
+    return AdventureService.getUserNamesByIds(userIds);
+  };
+
+  const extractUserIds = (occurrence: Occurrence): string[] => {
+    return Array.from(
+      new Set(occurrence.userComments!.map((comment) => comment.createdBy))
     );
-
-    res.forEach((r) => {
-      if (r.status === "fulfilled" && r.value) {
-        const rId: string = r.value._id as string;
-        idNameDictionary[rId] = r.value.name as string;
-      }
-    });
-    return idNameDictionary;
   };
 
   useEffect(() => {
@@ -206,7 +205,9 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
     setTitle(res.title);
     setDescription(res.description || "");
     setNotes(res.notes || "");
+
     const userNameIdDict = await fetchUserNames(res);
+
     setExistingEventData(res);
     setCommentStack(renderCommentStack(res, userNameIdDict));
   };
@@ -215,7 +216,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       const stack = document.getElementById("comments-container");
-      if (stack) {
+      if (stack && stack.lastChild) {
         if ((stack.lastChild as any).scrollIntoView) {
           (stack.lastChild as any).scrollIntoView();
         }
