@@ -2,7 +2,7 @@
 import dayjs from "dayjs";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { MdOutlineModeEdit } from "react-icons/md";
@@ -11,6 +11,7 @@ import { OccurrenceModal } from "../../../../components/occurrence-modal/Occurre
 import { OccurrenceToolbar } from "../../../../components/occurrence-toolbar/Occurrence-toolbar";
 import { Adventure } from "../../../../lib/models/adventure.model";
 import { EventType } from "../../../../lib/models/occurrence.model";
+import { usePageVisibility } from "../../../hooks/use-page-visibility";
 import { AdventureService } from "../../../services/adventure-service";
 import { ReactBigCalendarEvent } from "../definitions/definitions";
 import { adaptToReactBigCalendarEvent } from "../utils/adapt-to-big-calendar";
@@ -45,6 +46,11 @@ export default function ViewEditAdventurePage() {
   ] = useState("");
 
   const [isBusy, setIsBusy] = useState(false);
+
+  const [isPollingEnabled, setIsPollingEnabled] = useState(true);
+  const isPageVisible = usePageVisibility();
+  const timerIdRef = useRef<any>(null);
+
   useEffect(() => {
     fetchAdventureById();
   }, []);
@@ -173,6 +179,34 @@ export default function ViewEditAdventurePage() {
     }
   };
 
+  useEffect(() => {
+    const pollingCallBack = async () => {
+      try {
+        await fetchAdventureById();
+      } catch (error: any) {
+        console.error("polling stopped due to error:", error.message);
+        setIsPollingEnabled(false);
+      }
+    };
+
+    const startPolling = () => {
+      timerIdRef.current = setInterval(pollingCallBack, 3000);
+    };
+
+    const stopPolling = () => {
+      clearInterval(timerIdRef.current);
+    };
+
+    if (isPageVisible && isPollingEnabled) {
+      startPolling();
+    } else {
+      stopPolling();
+    }
+    return () => {
+      stopPolling();
+    };
+  }, [isPageVisible, isPollingEnabled]);
+
   if (status === "unauthenticated") {
     // Only authenticated users can access this page
     router.replace("/signin");
@@ -253,6 +287,7 @@ export default function ViewEditAdventurePage() {
           adventureId={params.adventureId}
           occurrenceType={activeTabOption}
           title={`New ${selectedEventId} event`}
+          newEvent
           onSubmit={(data, { notes, description, title }) => {
             setModalOpen(false);
             submitData(data, { notes, description, title });
