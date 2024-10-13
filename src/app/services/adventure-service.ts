@@ -154,4 +154,17 @@ export const AdventureService = {
       throw new Error("Failed to add comment");
     }
   },
+  getUserNamesByIds: async (
+    userIds: string[]
+  ): Promise<Record<string, string>> => {
+    // This function accepts an array of user ids and returns a dictionary of user ids to user names
+
+    const mappedUserIds = userIds.map((id) => `userIds=${id}`).join("&");
+    const res = await fetch(`/api/users/names?${mappedUserIds}`);
+    if (res.ok) {
+      const { users } = await res.json();
+      return users;
+    }
+    throw new Error("Failed to fetch user names");
+  },
 };
