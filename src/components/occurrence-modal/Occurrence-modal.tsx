@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { AdventureService } from "../../app/services/adventure-service";
+import { fetchUserProfile } from "../../app/services/userService";
 import {
   AccommodationOccurrence,
   ActivityOccurrence,
   EventType,
   FoodOccurrence,
   Occurrence,
+  StackerComment,
   TravelOccurrence,
 } from "../../lib/models/occurrence.model";
+import { CommentsContainer } from "../comment-components/Comment-stacker";
 import { accommodationOccurrence } from "./accommodation/Accommodation-occurence-modal";
 import { activityOccurrenceModal } from "./activity/Activity-occurrence-modal";
 import { OccurrenceSubmissionData } from "./definitions";
@@ -61,6 +64,10 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               placeholder="Notes"
               setText={setNotes}
             />,
+            <CommentsContainer
+              comments={commentStack}
+              onSubmit={handlePostComment}
+            />,
           ]
         );
       case "accommodation":
@@ -82,6 +89,10 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               text={notes}
               placeholder="Notes"
               setText={setNotes}
+            />,
+            <CommentsContainer
+              comments={commentStack}
+              onSubmit={handlePostComment}
             />,
           ]
         );
@@ -105,6 +116,10 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               placeholder="Notes"
               setText={setNotes}
             />,
+            <CommentsContainer
+              comments={commentStack}
+              onSubmit={handlePostComment}
+            />,
           ]
         );
       case "food":
@@ -127,6 +142,10 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               placeholder="Notes"
               setText={setNotes}
             />,
+            <CommentsContainer
+              comments={commentStack}
+              onSubmit={handlePostComment}
+            />,
           ]
         );
     }
@@ -138,25 +157,85 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   const [existingEventData, setExistingEventData] = useState<Occurrence | null>(
     null
   );
+  const [commentStack, setCommentStack] = useState<StackerComment[]>([]);
+
+  const handlePostComment = async (comment: string) => {
+    try {
+      await AdventureService.putComment(
+        props.adventureId,
+        props.currentEventId!,
+        comment
+      );
+      await fetchExistingOccurrence();
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
+
+  const fetchUserNames = async (
+    occurrence: Occurrence
+  ): Promise<Record<string, string>> => {
+    const idNameDictionary = {} as Record<string, string>;
+
+    const res = await Promise.allSettled(
+      occurrence.userComments!.map((c) => fetchUserProfile(c.createdBy))
+    );
+
+    res.forEach((r) => {
+      if (r.status === "fulfilled" && r.value) {
+        const rId: string = r.value._id as string;
+        idNameDictionary[rId] = r.value.name as string;
+      }
+    });
+    return idNameDictionary;
+  };
 
   useEffect(() => {
-    const fetchExistingOccurrence = async () => {
-      // Fetch the event data from the server
-      const res = await AdventureService.getOccurrenceById(
-        props.adventureId,
-        props.currentEventId!
-      );
-
-      setTitle(res.title);
-      setDescription(res.description || "");
-      setNotes(res.notes || "");
-      setExistingEventData(res);
-    };
     if (props.currentEventId && props.adventureId) {
       fetchExistingOccurrence();
     }
   }, [props.currentEventId, props.adventureId]);
 
+  const fetchExistingOccurrence = async () => {
+    // Fetch the event data from the server
+    const res = await AdventureService.getOccurrenceById(
+      props.adventureId,
+      props.currentEventId!
+    );
+
+    setTitle(res.title);
+    setDescription(res.description || "");
+    setNotes(res.notes || "");
+    const userNameIdDict = await fetchUserNames(res);
+    setExistingEventData(res);
+    setCommentStack(renderCommentStack(res, userNameIdDict));
+  };
+
+  // This is used to scroll the comments container to the bottom when a new comment is added
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const stack = document.getElementById("comments-container");
+      if (stack) {
+        if ((stack.lastChild as any).scrollIntoView) {
+          (stack.lastChild as any).scrollIntoView();
+        }
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [commentStack]);
+
+  const renderCommentStack = (
+    occurence: Occurrence,
+    idNameDictionary: Record<string, string>
+  ): StackerComment[] => {
+    return occurence.userComments!.map((c) => {
+      return {
+        ...c,
+        name: idNameDictionary[c.createdBy],
+      };
+    });
+  };
   return (
     <div
       key={props.occurrenceType}
