@@ -10,7 +10,7 @@ export default function NavBar() {
     <nav className="bg-base-100 shadow-md flex justify-between w-full p-4">
       <div className="flex justify-between w-full">
         <div className="self-center">
-          <Link href="/" className="text-2xl font-bold">
+          <Link href="/home" className="text-2xl font-bold">
             TravelIt ✈️
           </Link>
         </div>
