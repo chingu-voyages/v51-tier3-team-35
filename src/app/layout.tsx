@@ -31,7 +31,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextAuthProvider>
-          <NavBar /> {children}
+          <NavBar />
+          <div className="lg:ml-[10%] lg:mr-[10%]">{children}</div>
         </NextAuthProvider>
       </body>
     </html>
