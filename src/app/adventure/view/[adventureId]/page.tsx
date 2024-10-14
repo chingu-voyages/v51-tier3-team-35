@@ -13,6 +13,8 @@ import { EventType } from "../../../../lib/models/occurrence.model";
 import { AdventureService } from "../../../services/adventure-service";
 import { ReactBigCalendarEvent } from "../definitions/definitions";
 import { adaptToReactBigCalendarEvent } from "../utils/adapt-to-big-calendar";
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
+import AddUserPopup from "../../../components/AddUserPopup";
 
 export default function ViewEditAdventurePage() {
   const params = useParams<{ adventureId: string }>();
@@ -29,6 +31,10 @@ export default function ViewEditAdventurePage() {
   const [selectedEventType, setSelectedEventType] = useState<EventType | null>(
     null
   );
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
   const router = useRouter();
   const { status } = useSession();
 
@@ -151,9 +157,13 @@ export default function ViewEditAdventurePage() {
     router.replace("/signin");
     return null;
   }
-  // This is a placeholder to get basic functionality working
+
+  const openPopup = () => setIsPopupOpen(true);
+  const closePopup = () => setIsPopupOpen(false);
+
   return (
     <div>
+      <div className="flex justify-between">
       <OccurrenceToolbar
         onTabChange={(eventType: EventType) => {
           // We set the current active option to the selected tab
@@ -161,7 +171,10 @@ export default function ViewEditAdventurePage() {
           setActiveTabOption(eventType);
         }}
       />
+      <button type="button" className="btn btn-primary mr-20 mt-2" onClick={openPopup}>Add User</button>
+      </div>
       <h1 className="text-xl mb-4">{adventure?.description}</h1>
+      <AddUserPopup isPopupOpen={isPopupOpen} closePopup={closePopup} />
       <div>
         <Calendar
           date={currentDate.toDate()}
