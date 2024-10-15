@@ -20,14 +20,12 @@ export default function UserProfile({
   params: { userId: string };
 }) {
   const id = params.userId;
-  console.log("id on user profile is: ", id);
 
   const [user, setUser] = useState<Partial<User>>({});
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     fetchUserProfile(id).then(setUser);
-    console.log("User now looks like: ", user);
   }, []);
 
   const initialFormValues: FormValues = {
@@ -49,13 +47,15 @@ export default function UserProfile({
   if (!user) {
     return <div>Loading...</div>;
   }
-  console.log("isEditing? ", isEditing);
 
   const handleSubmit = async (
     values: FormValues,
     actions: FormikHelpers<FormValues>
   ) => {
-    const response = await updateUserProfile(values.name, values.password, id);
+    const response = await updateUserProfile({
+      name: values.name,
+      password: values.password,
+    });
     if (response.status === 200) {
       setUser((prevUser) => ({
         ...prevUser!,
@@ -136,7 +136,7 @@ export default function UserProfile({
                 />
               </div>
 
-              <div>
+              <div className="flex gap-2">
                 <button
                   type="submit"
                   disabled={isSubmitting}
