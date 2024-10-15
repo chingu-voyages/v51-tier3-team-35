@@ -1,6 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { getUserByEmail } from '../services/userService';
 import { AdventureService } from '../services/adventure-service';
+import { NextResponse } from 'next/server';
 
     interface Values {
         userEmail: string;
@@ -22,14 +23,18 @@ const AddUserPopup = ({ isPopupOpen, closePopup, adventureId }: PopupProps) => {
         return errors;
       };
 
-      const handleAddUser = async (values: Values) => {
+    const handleAddUser = async (values: Values) => {
         console.log("user Popup is working!")
-        const user = await getUserByEmail(values.userEmail);
-        const res = await AdventureService.addUserToAdventure(user._id, adventureId)
-        
-        closePopup(); // close the popup after adding user
-    
-      }
+        try {
+            const user = await getUserByEmail(values.userEmail);
+            await AdventureService.addUserToAdventure(user._id, adventureId)
+        } catch (err) {
+            console.error(err);
+        } finally {     
+            console.log("user add completed!");
+            closePopup(); 
+        }
+    }
 
     return (
         isPopupOpen && (
