@@ -1,4 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { getUserByEmail } from '../services/userService';
+import { AdventureService } from '../services/adventure-service';
 
     interface Values {
         userEmail: string;
@@ -7,9 +9,10 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
     interface PopupProps {
         isPopupOpen: boolean;
         closePopup: () => void;
+        adventureId: string;
     }
 
-const AddUserPopup = ({ isPopupOpen, closePopup }: PopupProps) => {
+const AddUserPopup = ({ isPopupOpen, closePopup, adventureId }: PopupProps) => {
 
     const validate = (values: Values) => {
         const errors: Partial<Values> = {};
@@ -19,8 +22,11 @@ const AddUserPopup = ({ isPopupOpen, closePopup }: PopupProps) => {
         return errors;
       };
 
-      const handleAddUser = () => {
+      const handleAddUser = async (values: Values) => {
         console.log("user Popup is working!")
+        const user = await getUserByEmail(values.userEmail);
+        const res = await AdventureService.addUserToAdventure(user._id, adventureId)
+        
         closePopup(); // close the popup after adding user
     
       }

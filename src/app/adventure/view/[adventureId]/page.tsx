@@ -174,7 +174,7 @@ export default function ViewEditAdventurePage() {
       <button type="button" className="btn btn-primary mr-20 mt-2" onClick={openPopup}>Add User</button>
       </div>
       <h1 className="text-xl mb-4">{adventure?.description}</h1>
-      <AddUserPopup isPopupOpen={isPopupOpen} closePopup={closePopup} />
+      <AddUserPopup isPopupOpen={isPopupOpen} closePopup={closePopup} adventureId={params.adventureId} />
       <div>
         <Calendar
           date={currentDate.toDate()}
