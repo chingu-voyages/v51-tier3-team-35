@@ -53,14 +53,14 @@ export const AdventureService = {
 
   async patchAdventureById(
     id: string,
-    { description }: Partial<Adventure>
+    { description, name, startDate, endDate }: Partial<Adventure>
   ): Promise<void> {
     const res = await fetch(`/api/adventure/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ description }),
+      body: JSON.stringify({ description, name, startDate, endDate }),
     });
     if (!res.ok) {
       throw new Error("Failed to update adventure");
