@@ -5,7 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { MdOutlineModeEdit } from "react-icons/md";
+import { CiSettings } from "react-icons/ci";
+import { MdClose } from "react-icons/md";
+import { AdventureSetupComponent } from "../../../../components/advebture-setup-component/Adeventure-setup-component";
 import { OccurrenceSubmissionData } from "../../../../components/occurrence-modal/definitions";
 import { OccurrenceModal } from "../../../../components/occurrence-modal/Occurrence-modal";
 import { OccurrenceToolbar } from "../../../../components/occurrence-toolbar/Occurrence-toolbar";
@@ -39,7 +41,7 @@ export default function ViewEditAdventurePage() {
   >([]);
 
   const [toastVisible, setToastVisible] = useState(false);
-  const [isEditingOccurrenceDesc, setIsEditingOccurrenceDesc] = useState(false);
+
   const [
     adventureDescriptionEditableText,
     setAdventureDescriptionEditableText,
@@ -48,11 +50,17 @@ export default function ViewEditAdventurePage() {
   const [isBusy, setIsBusy] = useState(false);
 
   const [isPollingEnabled, setIsPollingEnabled] = useState(true);
+  const [adventureConfigModalOpen, setAdventureConfigModalOpen] =
+    useState(false);
   const isPageVisible = usePageVisibility();
   const timerIdRef = useRef<any>(null);
 
   useEffect(() => {
-    fetchAdventureById();
+    try {
+      fetchAdventureById();
+    } catch (error: any) {
+      console.error("Error fetching adventure", error);
+    }
   }, []);
 
   useEffect(() => {
@@ -74,20 +82,16 @@ export default function ViewEditAdventurePage() {
   const localizer = dayjsLocalizer(dayjs);
 
   const fetchAdventureById = async () => {
-    try {
-      const result = await AdventureService.getAdventureById(
-        params.adventureId
-      );
+    const result = await AdventureService.getAdventureById(params.adventureId);
 
-      setAdventure(result);
-      const mappedEvents = result.occurrences.map((occurrence) =>
-        adaptToReactBigCalendarEvent(occurrence)
-      );
-      setEventOccurrences(mappedEvents);
-    } catch (error) {
-      // TODO: Redirect to an error page?
-      console.error(error);
-    }
+    setAdventure(result);
+
+    const mappedEvents = result.occurrences.map((occurrence) =>
+      adaptToReactBigCalendarEvent(occurrence)
+    );
+    setEventOccurrences(mappedEvents);
+
+    // TODO: Redirect to an error page?
   };
 
   const handleSelectEvent = useCallback((event: any) => {
@@ -144,19 +148,35 @@ export default function ViewEditAdventurePage() {
     }
 
     // Refresh the adventure data
-    await fetchAdventureById();
+    try {
+      await fetchAdventureById();
+    } catch (error: any) {
+      console.error("Error fetching/refreshing adventureData", error);
+    }
   };
 
   const handleNavigate = (date: Date, view: string, action: string) => {
+    // We need navigation logic that navigates to the next or previous week, but won't allow the user to navigate past the start date and end date of the adventure
+
     if (action === "NEXT") {
       if (view === "week") {
-        setCurrentDate(dayjs(currentDate).add(1, "week"));
+        const targetDate = dayjs(currentDate).add(1, "week");
+        if (targetDate.isAfter(dayjs(adventure?.endDate))) {
+          setCurrentDate(dayjs(adventure?.endDate));
+        } else {
+          setCurrentDate(targetDate);
+        }
       } else {
         setCurrentDate(dayjs(currentDate).add(1, "month"));
       }
     } else if (action === "PREV") {
       if (view === "week") {
-        setCurrentDate(dayjs(currentDate).subtract(1, "week"));
+        const targetDate = dayjs(currentDate).subtract(1, "week");
+        if (targetDate.isBefore(dayjs(adventure?.startDate))) {
+          setCurrentDate(dayjs(adventure?.startDate));
+        } else {
+          setCurrentDate(targetDate);
+        }
       } else {
         setCurrentDate(dayjs(currentDate).subtract(1, "month"));
       }
@@ -171,11 +191,19 @@ export default function ViewEditAdventurePage() {
         description: adventureDescriptionEditableText,
       });
       setToastVisible(true);
-      setIsEditingOccurrenceDesc(false);
       await fetchAdventureById();
       setIsBusy(false);
     } catch (error: any) {
       console.error(error);
+    }
+  };
+
+  const handlePatchAdventure = async () => {
+    try {
+      await fetchAdventureById();
+      setAdventureConfigModalOpen(false);
+    } catch (error: any) {
+      console.error("Error fetching/refreshing adventureData", error);
     }
   };
 
@@ -215,51 +243,26 @@ export default function ViewEditAdventurePage() {
   // This is a placeholder to get basic functionality working
   return (
     <div className="p-4">
-      <OccurrenceToolbar
-        onTabChange={(eventType: EventType) => {
-          // We set the current active option to the selected tab
-          // When the modal opens, it opens to the correct occurrence (event) type
-          setActiveTabOption(eventType);
-        }}
-      />
-      <div className="p-4 mb-4">
-        {/* Event description - editable */}
-        {!isEditingOccurrenceDesc ? (
-          <div
-            className="flex gap-2 hover:cursor-pointer"
-            onClick={() => setIsEditingOccurrenceDesc(true)}
-          >
-            <h1 className="text-xl mb-4">{adventure?.description}</h1>
-            <MdOutlineModeEdit className="text-2xl" />
-          </div>
-        ) : (
-          <div className="flex gap-2">
-            <input
-              className="w-[300px] px-2"
-              type="text"
-              value={adventureDescriptionEditableText}
-              onChange={(e) =>
-                setAdventureDescriptionEditableText(e.target.value)
-              }
-              maxLength={80}
-            />
-            <button
-              disabled={isBusy}
-              className="btn"
-              onClick={handleUpdateOccDescription}
-            >
-              Update
-            </button>
-            <button
-              className="btn btn-error"
-              onClick={() => {
-                setIsEditingOccurrenceDesc(false);
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        )}
+      <div className="flex justify-between">
+        <OccurrenceToolbar
+          onTabChange={(eventType: EventType) => {
+            // We set the current active option to the selected tab
+            // When the modal opens, it opens to the correct occurrence (event) type
+            setActiveTabOption(eventType);
+          }}
+        />
+        <div className="items-center">
+          <p className="text-lg">{adventure?.name}</p>
+        </div>
+        <div className="p-4">
+          {/* Event description - editable */}
+          <button onClick={() => setAdventureConfigModalOpen(true)}>
+            <div className="flex items-center gap-x-2">
+              <p>Configure</p>
+              <CiSettings className="text-2xl" />
+            </div>
+          </button>
+        </div>
       </div>
       <div>
         <Calendar
@@ -277,6 +280,11 @@ export default function ViewEditAdventurePage() {
           style={{ height: 800 }}
           selectable
           startAccessor={"start"}
+          min={dayjs(adventure?.startDate)
+            .set("hour", 0)
+            .set("minute", 0)
+            .set("second", 0)
+            .toDate()}
         />
       </div>
       {modalOpen && (
@@ -307,6 +315,28 @@ export default function ViewEditAdventurePage() {
             submitData(data, { notes, description, title }, { editing: true });
           }}
         />
+      )}
+      {adventureConfigModalOpen && (
+        <div className="absolute w-full top-[0] modal-container">
+          <div className="modal-box w-full max-w-[800px] lg:ml-[30%]">
+            <div className="flex justify-end">
+              <button onClick={() => setAdventureConfigModalOpen(false)}>
+                <MdClose />
+              </button>
+            </div>
+            {adventure?.name && adventure.description && (
+              <AdventureSetupComponent
+                title="Configure adventure"
+                name={adventure.name}
+                description={adventure.description}
+                startDate={adventure.startDate}
+                endDate={adventure.endDate}
+                id={adventure._id!}
+                onEventPatched={handlePatchAdventure}
+              />
+            )}
+          </div>
+        </div>
       )}
       {toastVisible && (
         <div className="toast toast-end opacity-60">
