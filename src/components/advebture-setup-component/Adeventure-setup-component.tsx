@@ -6,17 +6,32 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import { AdventureService } from "../../app/services/adventure-service";
 
-interface AdventureCreateEditorProps {
+interface AdventureSetupComponentProps {
   creating?: boolean;
+  title: string;
+  name?: string;
+  description?: string;
+  startDate?: Date;
+  id?: string;
+  endDate?: Date;
+  onEventPatched?: () => void;
 }
-export function AdventureCreateEditor({
+export function AdventureSetupComponent({
   creating,
-}: AdventureCreateEditorProps) {
+  title,
+  name,
+  description,
+  startDate,
+  endDate,
+  id,
+  onEventPatched,
+}: AdventureSetupComponentProps) {
   const router = useRouter();
   const { status } = useSession();
+
   const [dateRange, setDateRange] = useState<Record<string, Date>>({
-    startDate: dayjs().toDate(),
-    endDate: dayjs().add(7, "day").toDate(),
+    startDate: startDate || dayjs().toDate(),
+    endDate: endDate || dayjs().add(7, "day").toDate(),
   });
 
   const [dateError, setDateError] = useState<string | null>(null);
@@ -42,30 +57,50 @@ export function AdventureCreateEditor({
     router.replace("/signin");
     return null;
   }
+
   return (
     <div>
       <header>
-        <h1 className="text-4xl">New Adventure</h1>
+        <h1 className="text-4xl mb-4">{title}</h1>
       </header>
       <div>
         <Formik
           initialValues={{
-            name: "",
-            description: "",
+            name: name || "",
+            description: description || "",
           }}
           onSubmit={async (values, { setSubmitting }) => {
+            if (creating) {
+              try {
+                setSubmitting(true);
+
+                // Call the service to create the adventure
+                const res = await AdventureService.postCreateAdventure({
+                  ...values,
+                  startDate: dateRange.startDate,
+                  endDate: dateRange.endDate,
+                });
+
+                // We will get the id of the new adventure.
+                router.push(`/adventure/view/${res.id}`);
+                return;
+              } catch (error: any) {
+                console.error(error);
+                return;
+              }
+            }
+
+            if (!id) return;
             try {
               setSubmitting(true);
-
-              // Call the service to create the adventure
-              const res = await AdventureService.postCreateAdventure({
+              // Call the service to update the adventure
+              await AdventureService.patchAdventureById(id, {
                 ...values,
                 startDate: dateRange.startDate,
                 endDate: dateRange.endDate,
               });
 
-              // We will get the id of the new adventure.
-              router.push(`/adventure/view/${res.id}`);
+              onEventPatched && onEventPatched();
             } catch (error: any) {
               console.error(error);
             }
@@ -135,7 +170,7 @@ export function AdventureCreateEditor({
                   disabled={isSubmitting}
                 />
               </div>
-              <div>
+              <div className="mt-4">
                 {/* The section for picking a start and end date. These datepickers aren't compatible with Formik */}
                 <div className="flex gap-x-6 ml-8">
                   <div>
@@ -161,13 +196,13 @@ export function AdventureCreateEditor({
                   <div className="text-orange-600">{dateError}</div>
                 )}
               </div>
-              <div className="mt-4 flex justify-center">
+              <div className="mt-4 flex justify-end">
                 <button
                   type="submit"
                   className="btn btn-primary"
                   disabled={isSubmitting}
                 >
-                  {creating ? "Create" : "Update"} Adventure
+                  {creating ? "Create" : "Update"}
                 </button>
               </div>
             </form>

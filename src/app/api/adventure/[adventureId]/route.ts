@@ -57,13 +57,13 @@ export async function PATCH(
 
   const requestBody = await req.json();
 
-  const { description } = requestBody;
+  const { description, startDate, endDate, name } = requestBody;
 
   await dbConnect();
   try {
     const adventure = await AdventureModel.findByIdAndUpdate(
       params.adventureId,
-      { description }
+      { description, startDate, endDate, name }
     );
 
     if (!adventure) {
