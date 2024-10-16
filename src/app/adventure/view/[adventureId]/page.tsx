@@ -276,6 +276,21 @@ export default function ViewEditAdventurePage() {
           }}
           onSelectEvent={handleSelectEvent}
           onSelectSlot={handleSelectSlot}
+          onSelecting={(range: { start: Date; end: Date }) => {
+            if (
+              range.start <
+              dayjs(adventure?.startDate)
+                .set("hour", 0)
+                .set("minute", 0)
+                .toDate()
+            ) {
+              return false;
+            }
+
+            if (range.end > dayjs(adventure?.endDate).toDate()) {
+              return false;
+            }
+          }}
           onView={(view) => console.log(view)}
           style={{ height: 800 }}
           selectable
