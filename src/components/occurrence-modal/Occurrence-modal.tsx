@@ -240,7 +240,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   return (
     <div
       key={props.occurrenceType}
-      className={`absolute w-full top-[0] modal-container`}
+      className="absolute w-full top-[0] modal-container"
     >
       <div className="modal-box w-full max-w-[800px] lg:ml-[30%]">
         {/* Modal title */}
