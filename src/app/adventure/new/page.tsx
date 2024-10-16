@@ -1,7 +1,6 @@
-"use client";
 import "react-datepicker/dist/react-datepicker.css";
-import { AdventureCreateEditor } from "../../../components/adventure-create-editor/Adventure-create-editor";
+import { AdventureSetupComponent } from "../../../components/advebture-setup-component/Adeventure-setup-component";
 
 export default function NewAdventurePage() {
-  return AdventureCreateEditor({ creating: true });
+  return AdventureSetupComponent({ creating: true, title: "New Adventure" });
 }
