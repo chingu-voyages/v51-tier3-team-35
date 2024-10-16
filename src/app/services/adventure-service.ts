@@ -121,14 +121,14 @@ export const AdventureService = {
   },
   addUserToAdventure: async (
     adventureId: string, 
-    userId: string
+    email: string
   ): Promise<void> => {
     const res = await fetch(`/api/adventure/${adventureId}`, {
       method: "Patch",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userId }),
+      body: JSON.stringify({ email }),
     });
     if (!res.ok) {
       throw new Error("Failed to add user to adventure");

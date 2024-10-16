@@ -26,8 +26,9 @@ const AddUserPopup = ({ isPopupOpen, closePopup, adventureId }: PopupProps) => {
     const handleAddUser = async (values: Values) => {
         console.log("user Popup is working!")
         try {
-            const user = await getUserByEmail(values.userEmail);
-            await AdventureService.addUserToAdventure(user._id, adventureId)
+            console.log("values being sent: ", values);
+            console.log("adventureId is: ", adventureId);
+            await AdventureService.addUserToAdventure(adventureId, values.userEmail)
         } catch (err) {
             console.error(err);
         } finally {     

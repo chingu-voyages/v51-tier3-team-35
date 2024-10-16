@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import dbConnect from "../../../../lib/mongodb/mongodb";
 import { AdventureModel } from "../../../../lib/schemas/adventure.schema";
 import authOptions from "../../auth/auth-options";
+import { UserModel } from "../../../../lib/schemas/user.schema";
 
 export async function GET(
   req: NextRequest,
@@ -53,20 +54,28 @@ export async function PATCH( req: NextRequest, { params }: { params: { adventure
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
+  console.log("data looks like: ", data);
   await dbConnect();
 
   try {
     const adventure = await AdventureModel.findById(params.adventureId);
-
+    const user = await UserModel.findOne( {email: data.email})
+    console.log("user is now: ", user);
     if (!adventure) {
       return NextResponse.json(
         { error: `Adventure with id ${params.adventureId} not found` },
         { status: 404 }
       );
     }
+    if (!user) {
+      console.log("issue with user");
+      return NextResponse.json(
+        { error: `User with ${data.email} not found` },
+        { status: 404 }
+      );
+    }
     
-    adventure.participants.push(data.userId);
+    adventure.participants.push(user._id);
     await adventure.save();
     
     return NextResponse.json({ message: "User added successfully" }, { status: 200 });
