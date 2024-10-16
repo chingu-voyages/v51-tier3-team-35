@@ -22,7 +22,10 @@ export const updateUserProfile = async ({
   const response = await fetch(`/api/users/me`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, password }),
+    body: JSON.stringify({
+      name,
+      password: password?.trim().length === 0 ? null : password,
+    }),
   });
 
   if (!response.ok) throw new Error("Error updating profile");

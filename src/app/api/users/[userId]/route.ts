@@ -1,6 +1,7 @@
 import { hash } from "bcrypt";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { User } from "../../../../lib/models/user.model";
 import dbConnect from "../../../../lib/mongodb/mongodb";
 import { UserModel } from "../../../../lib/schemas/user.schema";
 import authOptions from "../../auth/auth-options";
@@ -52,12 +53,30 @@ export async function PATCH(
   // This automatically updates the requestors own user profile
   const requestBody = await req.json();
   const { name, password } = requestBody;
-  const hashedPassword = await hash(password, 10);
+
+  const dataToUpdate: Partial<User> = {};
+
+  if (name && name.length > 1) {
+    dataToUpdate.name = requestBody.name;
+  } else {
+    return NextResponse.json({
+      status: 400,
+      message: "Name must be at least 2 characters",
+    });
+  }
+
+  let hashedPassword: string;
+
+  if (password && password.length > 7) {
+    hashedPassword = await hash(password, 10);
+    dataToUpdate.hashedPassword = hashedPassword;
+  }
 
   await dbConnect();
+
   const updatedUser = await UserModel.findByIdAndUpdate(
     session.user?._id.toString(),
-    { name, hashedPassword }
+    dataToUpdate
   ).select("-hashedPassword");
 
   if (!updatedUser) {
