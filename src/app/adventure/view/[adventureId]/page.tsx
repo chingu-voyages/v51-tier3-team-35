@@ -42,13 +42,6 @@ export default function ViewEditAdventurePage() {
 
   const [toastVisible, setToastVisible] = useState(false);
 
-  const [
-    adventureDescriptionEditableText,
-    setAdventureDescriptionEditableText,
-  ] = useState("");
-
-  const [isBusy, setIsBusy] = useState(false);
-
   const [isPollingEnabled, setIsPollingEnabled] = useState(true);
   const [adventureConfigModalOpen, setAdventureConfigModalOpen] =
     useState(false);
@@ -74,10 +67,6 @@ export default function ViewEditAdventurePage() {
       };
     }
   }, [toastVisible]);
-
-  useEffect(() => {
-    setAdventureDescriptionEditableText(adventure?.description ?? "");
-  }, [adventure?.description]);
 
   const localizer = dayjsLocalizer(dayjs);
 
@@ -220,6 +209,19 @@ export default function ViewEditAdventurePage() {
     };
   }, [isPageVisible, isPollingEnabled]);
 
+  const handleDeleteOccurrence = async (currentEventId: string) => {
+    try {
+      await AdventureService.deleteOccurrenceById(
+        params.adventureId,
+        currentEventId
+      );
+      setExistingEventModalOpen(false);
+      await fetchAdventureById();
+    } catch (error: any) {
+      console.error(error);
+    }
+  };
+
   if (status === "unauthenticated") {
     // Only authenticated users can access this page
     router.replace("/signin");
@@ -311,6 +313,7 @@ export default function ViewEditAdventurePage() {
             setExistingEventModalOpen(false);
             submitData(data, { notes, description, title }, { editing: true });
           }}
+          onDeleteOccurrence={handleDeleteOccurrence}
         />
       )}
       {adventureConfigModalOpen && (
