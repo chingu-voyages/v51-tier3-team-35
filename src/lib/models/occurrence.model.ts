@@ -12,7 +12,7 @@ type BaseOccurrence = {
   startTime?: Date;
   endTime?: Date;
   notes?: string;
-  comments?: UserComment[];
+  userComments?: UserComment[];
 };
 
 type AddressBasedOccurence = {
@@ -51,3 +51,5 @@ export type Occurrence =
   | AccommodationOccurrence
   | ActivityOccurrence
   | FoodOccurrence;
+
+export type StackerComment = UserComment & { name: string };

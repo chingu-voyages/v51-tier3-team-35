@@ -16,7 +16,7 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchAdventuresByUser();
-  }, []);
+  }, [userAdventures.length]);
 
   const fetchAdventuresByUser = async () => {
     try {
