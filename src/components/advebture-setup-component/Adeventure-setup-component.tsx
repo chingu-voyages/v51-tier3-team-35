@@ -1,3 +1,4 @@
+"use client";
 import dayjs from "dayjs";
 import { Formik } from "formik";
 import { useSession } from "next-auth/react";
