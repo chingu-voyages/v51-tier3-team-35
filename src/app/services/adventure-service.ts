@@ -167,4 +167,15 @@ export const AdventureService = {
     }
     throw new Error("Failed to fetch user names");
   },
+  deleteOccurrenceById: async (adventureId: string, currentEventId: string) => {
+    const res = await fetch(
+      `/api/adventure/${adventureId}/occurrence/${currentEventId}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to delete occurrence");
+    }
+  },
 };
