@@ -183,21 +183,6 @@ export default function ViewEditAdventurePage() {
     }
   };
 
-  const handleUpdateOccDescription = async () => {
-    // Send request to patch the adventure description
-    try {
-      setIsBusy(true);
-      await AdventureService.patchAdventureById(params.adventureId, {
-        description: adventureDescriptionEditableText,
-      });
-      setToastVisible(true);
-      await fetchAdventureById();
-      setIsBusy(false);
-    } catch (error: any) {
-      console.error(error);
-    }
-  };
-
   const handlePatchAdventure = async () => {
     try {
       await fetchAdventureById();
@@ -286,10 +271,6 @@ export default function ViewEditAdventurePage() {
             ) {
               return false;
             }
-
-            if (range.end > dayjs(adventure?.endDate).toDate()) {
-              return false;
-            }
           }}
           onView={(view) => console.log(view)}
           style={{ height: 800 }}
@@ -310,6 +291,7 @@ export default function ViewEditAdventurePage() {
           adventureId={params.adventureId}
           occurrenceType={activeTabOption}
           title={`New ${selectedEventId} event`}
+          creating={true}
           onSubmit={(data, { notes, description, title }) => {
             setModalOpen(false);
             submitData(data, { notes, description, title });
