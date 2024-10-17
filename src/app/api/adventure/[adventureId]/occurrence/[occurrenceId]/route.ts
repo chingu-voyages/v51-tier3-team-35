@@ -85,3 +85,39 @@ export async function PATCH(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { adventureId: string; occurrenceId: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  await dbConnect();
+  try {
+    const adventure = await AdventureModel.findOne({
+      _id: params.adventureId,
+      "occurrences._id": params.occurrenceId,
+    });
+    if (!adventure)
+      return NextResponse.json(
+        { error: "Adventure not found" },
+        { status: 404 }
+      );
+
+    const filteredOccurrences = adventure.occurrences.filter(
+      (occ) => occ._id?.toString() !== params.occurrenceId
+    );
+
+    adventure.occurrences = filteredOccurrences;
+    await adventure.save();
+    return NextResponse.json(
+      { message: `Occurrence with id ${params.occurrenceId} deleted` },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
