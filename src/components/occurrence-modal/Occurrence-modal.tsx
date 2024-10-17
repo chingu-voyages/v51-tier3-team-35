@@ -24,6 +24,7 @@ interface OccurrenceModalProps {
   adventureId: string;
   currentEventId?: string | null;
   onClose: () => void;
+  creating?: boolean;
   onSubmit?: (
     data: OccurrenceSubmissionData,
     {
@@ -31,6 +32,7 @@ interface OccurrenceModalProps {
       description,
     }: { notes?: string; description?: string; title: string }
   ) => void;
+  onDeleteOccurrence?: (currentEventId: string) => void;
 }
 
 export function OccurrenceModal(props: OccurrenceModalProps) {
@@ -39,6 +41,10 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   */
   const handleDataSubmit = (data: OccurrenceSubmissionData) => {
     props.onSubmit && props.onSubmit(data, { notes, description, title });
+  };
+
+  const handleDeleteOccurrenceClicked = () => {
+    props.onDeleteOccurrence && props.onDeleteOccurrence(props.currentEventId!);
   };
 
   const getModalForEventType = (occurrenceType: EventType) => {
@@ -68,6 +74,12 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               comments={commentStack}
               onSubmit={handlePostComment}
             />,
+            <DeleteOccurrenceButton
+              creating={props.creating}
+              onClicked={() => {
+                setConfirmDeleteModalOpen(true);
+              }}
+            />,
           ]
         );
       case "accommodation":
@@ -93,6 +105,12 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+            />,
+            <DeleteOccurrenceButton
+              creating={props.creating}
+              onClicked={() => {
+                setConfirmDeleteModalOpen(true);
+              }}
             />,
           ]
         );
@@ -120,6 +138,12 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               comments={commentStack}
               onSubmit={handlePostComment}
             />,
+            <DeleteOccurrenceButton
+              creating={props.creating}
+              onClicked={() => {
+                setConfirmDeleteModalOpen(true);
+              }}
+            />,
           ]
         );
       case "food":
@@ -146,6 +170,13 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               comments={commentStack}
               onSubmit={handlePostComment}
             />,
+
+            <DeleteOccurrenceButton
+              creating={props.creating}
+              onClicked={() => {
+                setConfirmDeleteModalOpen(true);
+              }}
+            />,
           ]
         );
     }
@@ -158,6 +189,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
     null
   );
   const [commentStack, setCommentStack] = useState<StackerComment[]>([]);
+  const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
 
   const handlePostComment = async (comment: string) => {
     try {
@@ -260,6 +292,33 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
         {/* Modal is rendered here depending on the occurrence type */}
         {getModalForEventType(props.occurrenceType)}
       </div>
+      {confirmDeleteModalOpen && (
+        <div className="absolute w-full top-[0] modal-container">
+          <div className="modal-box w-full max-w-[800px] lg:ml-[30%] mt-[20vh]">
+            <h3 className="font-bold text-2xl mb-4">Are you sure?</h3>
+            <p className="mb-4">
+              Are you sure you want to delete this event? This action cannot be
+              undone.
+            </p>
+            <div className="flex justify-center gap-x-4">
+              <button
+                className="btn btn-error"
+                onClick={() => {
+                  handleDeleteOccurrenceClicked();
+                }}
+              >
+                Delete
+              </button>
+              <button
+                className="btn"
+                onClick={() => setConfirmDeleteModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -285,6 +344,28 @@ const FreeTextSection = ({
         onChange={(e) => setText(e.target.value)}
         maxLength={500}
       ></textarea>
+    </div>
+  );
+};
+
+const DeleteOccurrenceButton = ({
+  onClicked,
+  creating,
+}: {
+  onClicked: () => void;
+  creating?: boolean;
+}) => {
+  if (creating) return null;
+  return (
+    <div className="flex justify-center mt-4">
+      <button
+        className="text-red-600"
+        onClick={() => {
+          onClicked();
+        }}
+      >
+        Delete event
+      </button>
     </div>
   );
 };
