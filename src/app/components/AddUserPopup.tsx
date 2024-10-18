@@ -1,7 +1,5 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { getUserByEmail } from '../services/userService';
 import { AdventureService } from '../services/adventure-service';
-import { NextResponse } from 'next/server';
 
     interface Values {
         userEmail: string;

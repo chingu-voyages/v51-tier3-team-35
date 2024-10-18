@@ -123,7 +123,7 @@ export const AdventureService = {
     adventureId: string, 
     email: string
   ): Promise<void> => {
-    const res = await fetch(`/api/adventure/${adventureId}`, {
+    const res = await fetch(`/api/adventure/${adventureId}/participants`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
