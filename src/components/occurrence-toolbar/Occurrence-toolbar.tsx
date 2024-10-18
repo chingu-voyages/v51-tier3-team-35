@@ -27,7 +27,7 @@ export const OccurrenceToolbar = ({ onTabChange }: OccurrenceToolbarProps) => {
   };
 
   return (
-    <div role="tablist" className="tabs tabs-bordered p-4 max-w-fit flex">
+    <div role="tablist" className="tabs tabs-bordered max-w-fit flex mb-6">
       <a
         role="tab"
         className={`tab ${getActiveTabClass("travel")}`}

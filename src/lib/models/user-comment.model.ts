@@ -1,7 +1,7 @@
 export type UserComment = {
   _id?: string;
   text: string;
-  createdAt: Date;
+  createdAt?: Date;
   createdBy: string;
   adventureId: string;
   occurrenceId: string;

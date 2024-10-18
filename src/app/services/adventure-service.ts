@@ -51,6 +51,22 @@ export const AdventureService = {
     throw new Error("Failed to create adventure");
   },
 
+  async patchAdventureById(
+    id: string,
+    { description, name, startDate, endDate }: Partial<Adventure>
+  ): Promise<void> {
+    const res = await fetch(`/api/adventure/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ description, name, startDate, endDate }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to update adventure");
+    }
+  },
+
   async createOccurrence<T>({
     eventType,
     data,
@@ -117,6 +133,49 @@ export const AdventureService = {
     );
     if (!res.ok) {
       throw new Error("Failed to update occurrence");
+    }
+  },
+  putComment: async (
+    adventureId: string,
+    occurrenceId: string,
+    text: string
+  ): Promise<void> => {
+    const res = await fetch(
+      `/api/adventure/${adventureId}/occurrence/${occurrenceId}/comment`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to add comment");
+    }
+  },
+  getUserNamesByIds: async (
+    userIds: string[]
+  ): Promise<Record<string, string>> => {
+    // This function accepts an array of user ids and returns a dictionary of user ids to user names
+
+    const mappedUserIds = userIds.map((id) => `userIds=${id}`).join("&");
+    const res = await fetch(`/api/users/names?${mappedUserIds}`);
+    if (res.ok) {
+      const { users } = await res.json();
+      return users;
+    }
+    throw new Error("Failed to fetch user names");
+  },
+  deleteOccurrenceById: async (adventureId: string, currentEventId: string) => {
+    const res = await fetch(
+      `/api/adventure/${adventureId}/occurrence/${currentEventId}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!res.ok) {
+      throw new Error("Failed to delete occurrence");
     }
   },
 };
