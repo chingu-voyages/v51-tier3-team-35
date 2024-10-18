@@ -11,12 +11,13 @@ export async function addNotification(userId: string, newNotification: string) {
     }
   }
 
-export default async function displayNotifications(userId: string){
+export default async function displayNotifications(userId: string | undefined){
   const user = await UserModel.findById(userId);
+
   if (user) {
     user.notifications.length == 0 ? (
       <div tabIndex={0} className="collapse bg-base-200">
-        <button className="btn btn-primary collapse-title text-xl font-medium">Notifications</button>
+        <button className="btn btn-primary collapse-title text-lg font-medium">Notifications</button>
         <div className="collapse-content">
           <p>No notifications</p>
         </div>
@@ -25,7 +26,7 @@ export default async function displayNotifications(userId: string){
     : 
     (
       <div tabIndex={0} className="collapse bg-base-200">
-        <button className="btn btn-primary collapse-title text-xl font-medium">Notifications</button>
+        <button className="btn btn-primary collapse-title text-lg font-medium">Notifications</button>
         <div className="collapse-content">
             {user.notifications.map((notification, index) => (
               <div key={index}>
@@ -35,8 +36,8 @@ export default async function displayNotifications(userId: string){
         </div>
       </div>)
       
-
   } else {
-    throw new Error("User not found");
+    return null;
   }
+
 }

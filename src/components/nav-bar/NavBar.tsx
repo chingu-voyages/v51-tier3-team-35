@@ -3,9 +3,27 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { RxAvatar } from "react-icons/rx";
+import displayNotifications from "../notifcations/Notifications";
+import { useEffect, useState } from "react";
+import { fetchNotifications } from "../../app/services/userService";
 export default function NavBar() {
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  const [notifications, setNotifications]= useState([]);
+
+  useEffect(() => {
+    if(session?.user) {
+
+      const data = fetchNotifications(session?.user._id);
+      data.then((res) => {
+        if (res.status === 200) {
+          setNotifications(res.data);
+        }
+      });      
+    }
+  }, [session])
+
   return (
     <nav className="bg-base-100 shadow-md flex justify-between w-full p-4">
       <div className="flex justify-between w-full">
@@ -16,6 +34,7 @@ export default function NavBar() {
         </div>
         {status === "authenticated" && (
           <div className="flex space-x-4">
+            
             <Link href="/adventure/new" className="btn btn-primary">
               New Adventure
             </Link>

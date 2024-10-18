@@ -31,3 +31,13 @@ export const updateUserProfile = async ({
   if (!response.ok) throw new Error("Error updating profile");
   return response.json();
 };
+
+export const fetchNotifications = async(userId: string) => {
+    const response = await fetch(`/api/users/${userId}/notifications`,{
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) throw new Error("Error fetching user notifications");
+    const data = await response.json();
+    return data;
+}
