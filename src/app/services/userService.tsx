@@ -31,4 +31,3 @@ export const updateUserProfile = async (name: string, password: string, userId: 
         return response.json(); 
     }
 };
-
