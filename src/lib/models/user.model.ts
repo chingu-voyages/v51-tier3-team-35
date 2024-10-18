@@ -6,5 +6,6 @@ export type User = {
   createdAt: Date;
   updatedAt: Date;
   email: string;
+  notifications: string[];
   avatarUrl?: string;
 };

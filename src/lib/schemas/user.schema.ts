@@ -23,9 +23,16 @@ const userSchema = new Schema<User>(
     avatarUrl: {
       type: String,
     },
+    notifications: {
+      type: [String],
+      default: [],
+      validate: [notificationLimit, "Cannot have more than 3 notifications"],
+    },
   },
   { timestamps: true }
 );
-
+function notificationLimit(val: []) {
+  return val.length <= 3;
+}
 export const UserModel: mongoose.Model<User> =
   mongoose.models.User || mongoose.model<User>("User", userSchema);
