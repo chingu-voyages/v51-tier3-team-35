@@ -23,6 +23,10 @@ const userSchema = new Schema<User>(
     avatarUrl: {
       type: String,
     },
+    notifications: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );
