@@ -21,10 +21,7 @@ const AddUserPopup = ({ isPopupOpen, closePopup, adventureId }: PopupProps) => {
   };
 
   const handleAddUser = async (values: Values) => {
-    console.log("user Popup is working!");
     try {
-      console.log("values being sent: ", values);
-      console.log("adventureId is: ", adventureId);
       await AdventureService.addUserToAdventure(adventureId, values.userEmail);
     } catch (err) {
       console.error(err);
@@ -36,9 +33,9 @@ const AddUserPopup = ({ isPopupOpen, closePopup, adventureId }: PopupProps) => {
 
   return (
     isPopupOpen && (
-      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-10">
-        <div className="bg-white p-6 rounded shadow-lg w-1/3">
-          <h2 className="text-xl mb-4">Add User to Planner</h2>
+      <div className="absolute w-full top-[0] modal-container">
+        <div className="modal-box lg:ml-[30%] mt-[40vh]">
+          <h2 className="text-xl mb-4">Add Collaborator</h2>
           <Formik
             initialValues={{
               userEmail: "",
