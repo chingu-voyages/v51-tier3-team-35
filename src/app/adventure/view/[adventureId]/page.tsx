@@ -47,6 +47,8 @@ export default function ViewEditAdventurePage() {
   >([]);
 
   const [toastVisible, setToastVisible] = useState(false);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [toastMessage, setToastMessage] = useState("");
 
   const [isPollingEnabled, setIsPollingEnabled] = useState(true);
   const [adventureConfigModalOpen, setAdventureConfigModalOpen] =
@@ -66,6 +68,7 @@ export default function ViewEditAdventurePage() {
     if (toastVisible) {
       const timer = setTimeout(() => {
         setToastVisible(false);
+        setToastMessage("");
       }, 3000);
 
       return () => {
@@ -136,6 +139,8 @@ export default function ViewEditAdventurePage() {
           selectedEventType!,
           { notes, title, description, ...data }
         );
+        setToastMessage("Event updated successfully");
+        setToastType("success");
         setToastVisible(true);
       } catch (error: any) {
         console.error(error);
@@ -194,8 +199,14 @@ export default function ViewEditAdventurePage() {
         values.userEmail
       );
       closePopup();
+      setToastMessage("Collaborator added successfully");
+      setToastType("success");
+      setToastVisible(true);
     } catch (error: any) {
-      console.error("Error adding collaborator", error);
+      closePopup();
+      setToastMessage("Unable to add collaborator");
+      setToastType("error");
+      setToastVisible(true);
     }
   };
 
@@ -375,8 +386,12 @@ export default function ViewEditAdventurePage() {
       )}
       {toastVisible && (
         <div className="toast toast-end opacity-60">
-          <div className="alert alert-success">
-            <span>Successfully updated.</span>
+          <div
+            className={`alert ${
+              toastType === "success" ? "alert-success" : "alert-error"
+            }`}
+          >
+            <span>{toastMessage}</span>
           </div>
         </div>
       )}
