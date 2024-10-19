@@ -4,7 +4,6 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IoMdAdd } from "react-icons/io";
 import { Adventure } from "../../lib/models/adventure.model";
 import { AdventureService } from "../services/adventure-service";
 
@@ -43,22 +42,11 @@ export default function HomePage() {
           {/* TODO: show user avatar here  */}
           <h1 className="text-4xl"> Welcome, {session?.user?.name}</h1>
         </div>
-        <div>
-          {/* New adventure button */}
-          <Link href="/adventure/new">
-            <button className="btn btn-primary">
-              <div className="flex">
-                <IoMdAdd />
-                New Adventure
-              </div>
-            </button>
-          </Link>
-        </div>
       </header>
       {/* Adventure list goes here */}
-      <div>
+      <div className="mt-8">
         <header>
-          <h2 className="text-2xl">Your Adventures</h2>
+          <h2 className="text-2xl font-bold">Your Adventures</h2>
         </header>
         <div>
           <table className="table">

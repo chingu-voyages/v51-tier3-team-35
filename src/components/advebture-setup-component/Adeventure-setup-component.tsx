@@ -173,7 +173,7 @@ export function AdventureSetupComponent({
               </div>
               <div className="mt-4">
                 {/* The section for picking a start and end date. These datepickers aren't compatible with Formik */}
-                <div className="flex gap-x-6 ml-8">
+                <div className="flex gap-x-6 gap-y-6 ml-8 flex-wrap">
                   <div>
                     <h4>Adventure starts:</h4>
                     <DatePicker
@@ -197,7 +197,7 @@ export function AdventureSetupComponent({
                   <div className="text-orange-600">{dateError}</div>
                 )}
               </div>
-              <div className="mt-4 flex justify-end">
+              <div className="mt-4 flex justify-center">
                 <button
                   type="submit"
                   className="btn btn-primary"

@@ -286,8 +286,8 @@ export default function ViewEditAdventurePage() {
           <div>
             <button type="button" className="" onClick={openPopup}>
               <div className="flex items-center gap-x-2">
-                <p style={{ color: "#7480ff" }}>Add Collaborator</p>
-                <HiUserAdd style={{ color: "#7480ff" }} className="text-2xl" />
+                <p className="grape">Add Collaborator</p>
+                <HiUserAdd className="text-2xl grape" />
               </div>
             </button>
           </div>
