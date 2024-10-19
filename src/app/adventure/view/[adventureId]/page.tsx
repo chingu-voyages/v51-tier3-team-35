@@ -187,6 +187,18 @@ export default function ViewEditAdventurePage() {
     }
   };
 
+  const handleAddCollaborator = async (values: { userEmail: string }) => {
+    try {
+      await AdventureService.addUserToAdventure(
+        params.adventureId,
+        values.userEmail
+      );
+      closePopup();
+    } catch (error: any) {
+      console.error("Error adding collaborator", error);
+    }
+  };
+
   useEffect(() => {
     const pollingCallBack = async () => {
       try {
@@ -273,7 +285,7 @@ export default function ViewEditAdventurePage() {
       <AddUserPopup
         isPopupOpen={isPopupOpen}
         closePopup={closePopup}
-        adventureId={params.adventureId}
+        onSubmit={handleAddCollaborator}
       />
       <div>
         <Calendar

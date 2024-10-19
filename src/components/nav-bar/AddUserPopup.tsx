@@ -1,5 +1,4 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { AdventureService } from "../../app/services/adventure-service";
 
 interface Values {
   userEmail: string;
@@ -8,10 +7,10 @@ interface Values {
 interface PopupProps {
   isPopupOpen: boolean;
   closePopup: () => void;
-  adventureId: string;
+  onSubmit?: (values: Values) => void;
 }
 
-const AddUserPopup = ({ isPopupOpen, closePopup, adventureId }: PopupProps) => {
+const AddUserPopup = ({ isPopupOpen, closePopup, onSubmit }: PopupProps) => {
   const validate = (values: Values) => {
     const errors: Partial<Values> = {};
     if (!values.userEmail) {
@@ -20,15 +19,8 @@ const AddUserPopup = ({ isPopupOpen, closePopup, adventureId }: PopupProps) => {
     return errors;
   };
 
-  const handleAddUser = async (values: Values) => {
-    try {
-      await AdventureService.addUserToAdventure(adventureId, values.userEmail);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      console.log("user add completed!");
-      closePopup();
-    }
+  const handleSubmit = async (values: Values) => {
+    onSubmit && onSubmit(values);
   };
 
   return (
@@ -40,7 +32,7 @@ const AddUserPopup = ({ isPopupOpen, closePopup, adventureId }: PopupProps) => {
             initialValues={{
               userEmail: "",
             }}
-            onSubmit={handleAddUser}
+            onSubmit={handleSubmit}
             validate={validate}
           >
             <Form>
