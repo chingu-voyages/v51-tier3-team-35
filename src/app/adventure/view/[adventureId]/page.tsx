@@ -17,6 +17,8 @@ import { usePageVisibility } from "../../../hooks/use-page-visibility";
 import { AdventureService } from "../../../services/adventure-service";
 import { ReactBigCalendarEvent } from "../definitions/definitions";
 import { adaptToReactBigCalendarEvent } from "../utils/adapt-to-big-calendar";
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
+import AddUserPopup from "../../../components/AddUserPopup";
 
 export default function ViewEditAdventurePage() {
   const params = useParams<{ adventureId: string }>();
@@ -33,6 +35,10 @@ export default function ViewEditAdventurePage() {
   const [selectedEventType, setSelectedEventType] = useState<EventType | null>(
     null
   );
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
   const router = useRouter();
   const { status } = useSession();
 
@@ -227,17 +233,21 @@ export default function ViewEditAdventurePage() {
     router.replace("/signin");
     return null;
   }
-  // This is a placeholder to get basic functionality working
+
+  const openPopup = () => setIsPopupOpen(true);
+  const closePopup = () => setIsPopupOpen(false);
+
   return (
     <div className="p-4">
       <div className="flex justify-between">
-        <OccurrenceToolbar
+      <OccurrenceToolbar
           onTabChange={(eventType: EventType) => {
             // We set the current active option to the selected tab
             // When the modal opens, it opens to the correct occurrence (event) type
             setActiveTabOption(eventType);
           }}
         />
+      <button type="button" className="btn btn-primary mr-20 mt-2" onClick={openPopup}>Add User</button>
         <div className="items-center">
           <p className="text-lg">{adventure?.name}</p>
         </div>
@@ -251,6 +261,7 @@ export default function ViewEditAdventurePage() {
           </button>
         </div>
       </div>
+      <AddUserPopup isPopupOpen={isPopupOpen} closePopup={closePopup} adventureId={params.adventureId} />
       <div>
         <Calendar
           date={currentDate.toDate()}

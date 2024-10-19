@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { getServerSession } from "next-auth";
 import dbConnect from "../../../../lib/mongodb/mongodb";
 import { AdventureModel } from "../../../../lib/schemas/adventure.schema";

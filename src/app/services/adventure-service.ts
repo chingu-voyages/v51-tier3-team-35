@@ -178,4 +178,19 @@ export const AdventureService = {
       throw new Error("Failed to delete occurrence");
     }
   },
+  addUserToAdventure: async (
+    adventureId: string, 
+    email: string
+  ): Promise<void> => {
+    const res = await fetch(`/api/adventure/${adventureId}/participants`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to add user to adventure");
+    }
+  }
 };
