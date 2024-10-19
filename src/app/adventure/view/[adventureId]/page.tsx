@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { CiSettings } from "react-icons/ci";
+import { HiUserAdd } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
 import { AdventureSetupComponent } from "../../../../components/advebture-setup-component/Adeventure-setup-component";
 import AddUserPopup from "../../../../components/nav-bar/AddUserPopup";
@@ -238,6 +239,9 @@ export default function ViewEditAdventurePage() {
 
   return (
     <div className="p-4">
+      <div className="items-center mt-4 mb-4 flex justify-center">
+        <p className="text-xl font-bold">{adventure?.name}</p>
+      </div>
       <div className="flex justify-between">
         <OccurrenceToolbar
           onTabChange={(eventType: EventType) => {
@@ -246,24 +250,24 @@ export default function ViewEditAdventurePage() {
             setActiveTabOption(eventType);
           }}
         />
-        <button
-          type="button"
-          className="btn btn-primary mr-20 mt-2"
-          onClick={openPopup}
-        >
-          Add User
-        </button>
-        <div className="items-center">
-          <p className="text-lg">{adventure?.name}</p>
-        </div>
-        <div className="p-4">
+        <div className="p-4 text-end">
           {/* Event description - editable */}
-          <button onClick={() => setAdventureConfigModalOpen(true)}>
-            <div className="flex items-center gap-x-2">
-              <p>Configure</p>
-              <CiSettings className="text-2xl" />
-            </div>
-          </button>
+          <div>
+            <button onClick={() => setAdventureConfigModalOpen(true)}>
+              <div className="flex items-center gap-x-2">
+                <p style={{ color: "#7480ff" }}>Configure</p>
+                <CiSettings style={{ color: "#7480ff" }} className="text-2xl" />
+              </div>
+            </button>
+          </div>
+          <div>
+            <button type="button" className="" onClick={openPopup}>
+              <div className="flex items-center gap-x-2">
+                <p style={{ color: "#7480ff" }}>Add Collaborator</p>
+                <HiUserAdd style={{ color: "#7480ff" }} className="text-2xl" />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
       <AddUserPopup
@@ -294,7 +298,6 @@ export default function ViewEditAdventurePage() {
               return false;
             }
           }}
-          onView={(view) => console.log(view)}
           style={{ height: 800 }}
           selectable
           startAccessor={"start"}
