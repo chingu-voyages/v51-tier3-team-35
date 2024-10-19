@@ -303,7 +303,7 @@ export default function ViewEditAdventurePage() {
           onClose={() => setModalOpen(false)}
           adventureId={params.adventureId}
           occurrenceType={activeTabOption}
-          title={`New ${selectedEventId} event`}
+          title={`New ${activeTabOption} event`}
           creating={true}
           onSubmit={(data, { notes, description, title }) => {
             setModalOpen(false);
