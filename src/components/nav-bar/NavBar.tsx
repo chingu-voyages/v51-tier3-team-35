@@ -16,7 +16,7 @@ export default function NavBar() {
         </div>
         {status === "authenticated" && (
           <div className="flex space-x-4">
-            <Link href="/adventure/new" className="btn btn-primary">
+            <Link href="/adventure/new" className="grape self-center">
               New Adventure
             </Link>
             <div className="dropdown dropdown-end">

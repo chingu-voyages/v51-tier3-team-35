@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Calendar, dayjsLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { CiSettings } from "react-icons/ci";
+import { HiUserAdd } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
 import { AdventureSetupComponent } from "../../../../components/advebture-setup-component/Adeventure-setup-component";
 import AddUserPopup from "../../../../components/nav-bar/AddUserPopup";
@@ -46,6 +47,8 @@ export default function ViewEditAdventurePage() {
   >([]);
 
   const [toastVisible, setToastVisible] = useState(false);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [toastMessage, setToastMessage] = useState("");
 
   const [isPollingEnabled, setIsPollingEnabled] = useState(true);
   const [adventureConfigModalOpen, setAdventureConfigModalOpen] =
@@ -65,6 +68,7 @@ export default function ViewEditAdventurePage() {
     if (toastVisible) {
       const timer = setTimeout(() => {
         setToastVisible(false);
+        setToastMessage("");
       }, 3000);
 
       return () => {
@@ -135,6 +139,8 @@ export default function ViewEditAdventurePage() {
           selectedEventType!,
           { notes, title, description, ...data }
         );
+        setToastMessage("Event updated successfully");
+        setToastType("success");
         setToastVisible(true);
       } catch (error: any) {
         console.error(error);
@@ -183,6 +189,24 @@ export default function ViewEditAdventurePage() {
       setAdventureConfigModalOpen(false);
     } catch (error: any) {
       console.error("Error fetching/refreshing adventureData", error);
+    }
+  };
+
+  const handleAddCollaborator = async (values: { userEmail: string }) => {
+    try {
+      await AdventureService.addUserToAdventure(
+        params.adventureId,
+        values.userEmail
+      );
+      closePopup();
+      setToastMessage("Collaborator added successfully");
+      setToastType("success");
+      setToastVisible(true);
+    } catch (error: any) {
+      closePopup();
+      setToastMessage("Unable to add collaborator");
+      setToastType("error");
+      setToastVisible(true);
     }
   };
 
@@ -238,6 +262,9 @@ export default function ViewEditAdventurePage() {
 
   return (
     <div className="p-4">
+      <div className="items-center mt-4 mb-4 flex justify-center">
+        <p className="text-xl font-bold">{adventure?.name}</p>
+      </div>
       <div className="flex justify-between">
         <OccurrenceToolbar
           onTabChange={(eventType: EventType) => {
@@ -246,30 +273,30 @@ export default function ViewEditAdventurePage() {
             setActiveTabOption(eventType);
           }}
         />
-        <button
-          type="button"
-          className="btn btn-primary mr-20 mt-2"
-          onClick={openPopup}
-        >
-          Add User
-        </button>
-        <div className="items-center">
-          <p className="text-lg">{adventure?.name}</p>
-        </div>
-        <div className="p-4">
+        <div className="p-4 text-end">
           {/* Event description - editable */}
-          <button onClick={() => setAdventureConfigModalOpen(true)}>
-            <div className="flex items-center gap-x-2">
-              <p>Configure</p>
-              <CiSettings className="text-2xl" />
-            </div>
-          </button>
+          <div>
+            <button onClick={() => setAdventureConfigModalOpen(true)}>
+              <div className="flex items-center gap-x-2">
+                <p style={{ color: "#7480ff" }}>Configure</p>
+                <CiSettings style={{ color: "#7480ff" }} className="text-2xl" />
+              </div>
+            </button>
+          </div>
+          <div>
+            <button type="button" className="" onClick={openPopup}>
+              <div className="flex items-center gap-x-2">
+                <p className="grape">Add Collaborator</p>
+                <HiUserAdd className="text-2xl grape" />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
       <AddUserPopup
         isPopupOpen={isPopupOpen}
         closePopup={closePopup}
-        adventureId={params.adventureId}
+        onSubmit={handleAddCollaborator}
       />
       <div>
         <Calendar
@@ -294,7 +321,6 @@ export default function ViewEditAdventurePage() {
               return false;
             }
           }}
-          onView={(view) => console.log(view)}
           style={{ height: 800 }}
           selectable
           startAccessor={"start"}
@@ -360,8 +386,12 @@ export default function ViewEditAdventurePage() {
       )}
       {toastVisible && (
         <div className="toast toast-end opacity-60">
-          <div className="alert alert-success">
-            <span>Successfully updated.</span>
+          <div
+            className={`alert ${
+              toastType === "success" ? "alert-success" : "alert-error"
+            }`}
+          >
+            <span>{toastMessage}</span>
           </div>
         </div>
       )}
