@@ -8,6 +8,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { CiSettings } from "react-icons/ci";
 import { MdClose } from "react-icons/md";
 import { AdventureSetupComponent } from "../../../../components/advebture-setup-component/Adeventure-setup-component";
+import AddUserPopup from "../../../../components/nav-bar/AddUserPopup";
 import { OccurrenceSubmissionData } from "../../../../components/occurrence-modal/definitions";
 import { OccurrenceModal } from "../../../../components/occurrence-modal/Occurrence-modal";
 import { OccurrenceToolbar } from "../../../../components/occurrence-toolbar/Occurrence-toolbar";
@@ -17,8 +18,6 @@ import { usePageVisibility } from "../../../hooks/use-page-visibility";
 import { AdventureService } from "../../../services/adventure-service";
 import { ReactBigCalendarEvent } from "../definitions/definitions";
 import { adaptToReactBigCalendarEvent } from "../utils/adapt-to-big-calendar";
-import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
-import AddUserPopup from "../../../components/AddUserPopup";
 
 export default function ViewEditAdventurePage() {
   const params = useParams<{ adventureId: string }>();
@@ -240,14 +239,20 @@ export default function ViewEditAdventurePage() {
   return (
     <div className="p-4">
       <div className="flex justify-between">
-      <OccurrenceToolbar
+        <OccurrenceToolbar
           onTabChange={(eventType: EventType) => {
             // We set the current active option to the selected tab
             // When the modal opens, it opens to the correct occurrence (event) type
             setActiveTabOption(eventType);
           }}
         />
-      <button type="button" className="btn btn-primary mr-20 mt-2" onClick={openPopup}>Add User</button>
+        <button
+          type="button"
+          className="btn btn-primary mr-20 mt-2"
+          onClick={openPopup}
+        >
+          Add User
+        </button>
         <div className="items-center">
           <p className="text-lg">{adventure?.name}</p>
         </div>
@@ -261,7 +266,11 @@ export default function ViewEditAdventurePage() {
           </button>
         </div>
       </div>
-      <AddUserPopup isPopupOpen={isPopupOpen} closePopup={closePopup} adventureId={params.adventureId} />
+      <AddUserPopup
+        isPopupOpen={isPopupOpen}
+        closePopup={closePopup}
+        adventureId={params.adventureId}
+      />
       <div>
         <Calendar
           date={currentDate.toDate()}
@@ -303,7 +312,7 @@ export default function ViewEditAdventurePage() {
           onClose={() => setModalOpen(false)}
           adventureId={params.adventureId}
           occurrenceType={activeTabOption}
-          title={`New ${selectedEventId} event`}
+          title={`New ${activeTabOption} event`}
           creating={true}
           onSubmit={(data, { notes, description, title }) => {
             setModalOpen(false);
