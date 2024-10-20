@@ -32,22 +32,22 @@ export const updateUserProfile = async ({
   return response.json();
 };
 
-export const fetchNotifications = async(userId: string)=> {
-    const response = await fetch(`/api/users/${userId}/notifications`,{
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-    });
-    if (!response.ok) throw new Error("Error fetching user notifications");
-    const data = await response.json();
-    return data;
-}
+export const fetchNotifications = async (
+  userId: string
+): Promise<{ notifications: string[] }> => {
+  const response = await fetch(`/api/users/${userId}/notifications`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) throw new Error("Error fetching user notifications");
+  return (await response.json()) as { notifications: string[] };
+};
 
-export const dismissNotifications = async (userId: string) => {
+export const dismissNotifications = async (userId: string): Promise<void> => {
   const response = await fetch(`/api/users/${userId}/notifications`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
   });
 
   if (!response.ok) throw new Error("Error dismissing notifications");
-  return response.json();
 };
