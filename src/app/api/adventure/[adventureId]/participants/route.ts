@@ -41,6 +41,16 @@ export async function PATCH(
     ];
     await adventure.save();
 
+    if(!user.notifications){
+      user.notifications = [];
+    }
+    if (user.notifications.length >= 3) {
+      user.notifications.shift(); // Remove the oldest notification
+    }
+      user.notifications.push(`${session?.user?.name} added you to ${adventure.name}`)
+    
+    await user.save();
+
     return NextResponse.json(
       { message: "User added successfully" },
       { status: 200 }
