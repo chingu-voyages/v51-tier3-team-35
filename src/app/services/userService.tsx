@@ -32,7 +32,7 @@ export const updateUserProfile = async ({
   return response.json();
 };
 
-export const fetchNotifications = async(userId: string) => {
+export const fetchNotifications = async(userId: string)=> {
     const response = await fetch(`/api/users/${userId}/notifications`,{
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },

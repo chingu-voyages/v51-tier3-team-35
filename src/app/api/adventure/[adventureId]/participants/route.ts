@@ -35,7 +35,14 @@ export async function PATCH( req: NextRequest, { params }: { params: { adventure
       
       adventure.participants.push(user._id);
       await adventure.save();
-      user.notifications.push(`You have been added to ${adventure.name}`)
+      if(!user.notifications){
+        user.notifications = [];
+      }
+      if (user.notifications.length >= 3) {
+        user.notifications.shift(); // Remove the oldest notification
+      }
+        user.notifications.push(`You have been added to ${adventure.name}`)
+      
       await user.save();
       return NextResponse.json({ message: "User added successfully" }, { status: 200 });
       // Handle the request

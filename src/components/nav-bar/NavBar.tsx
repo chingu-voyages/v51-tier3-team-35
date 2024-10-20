@@ -3,7 +3,6 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { RxAvatar } from "react-icons/rx";
-import displayNotifications from "../notifcations/Notifications";
 import { useEffect, useRef, useState } from "react";
 import { fetchNotifications } from "../../app/services/userService";
 export default function NavBar() {
