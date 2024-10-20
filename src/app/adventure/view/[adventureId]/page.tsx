@@ -313,10 +313,15 @@ export default function ViewEditAdventurePage() {
           onSelecting={(range: { start: Date; end: Date }) => {
             if (
               range.start <
-              dayjs(adventure?.startDate)
-                .set("hour", 0)
-                .set("minute", 0)
-                .toDate()
+                dayjs(adventure?.startDate)
+                  .set("hour", 0)
+                  .set("minute", 0)
+                  .toDate() ||
+              range.start >
+                dayjs(adventure?.endDate)
+                  .set("hour", 0)
+                  .set("minute", 0)
+                  .toDate()
             ) {
               return false;
             }
