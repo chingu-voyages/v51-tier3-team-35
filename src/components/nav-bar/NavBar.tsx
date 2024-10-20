@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { RxAvatar } from "react-icons/rx";
 import { useEffect, useRef, useState } from "react";
-import { fetchNotifications } from "../../app/services/userService";
+import { dismissNotifications, fetchNotifications } from "../../app/services/userService";
 export default function NavBar() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -46,6 +46,19 @@ export default function NavBar() {
       stopPolling();
     };
   }, [session])
+
+  const dismissHandler = async () => {
+    try {
+      // Sending a PATCH request to clear the notifications
+      dismissNotifications(session?.user?._id)
+
+      // Update local state after successful request
+      setNotifications([]);
+      setIsDropdownOpen(false); // Close the dropdown after dismissing
+    } catch (error) {
+      console.error('Failed to dismiss notifications:', error);
+    }
+  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -90,6 +103,12 @@ export default function NavBar() {
             <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg z-50">
               <div className="p-4">
                 <h2 className="text-lg font-semibold">Notifications</h2>
+                <button
+                    onClick={dismissHandler}
+                    className="btn btn-sm btn-outline btn-error"
+                  >
+                    Dismiss All
+                  </button>
                 <ul className="mt-2">
                   {notifications.length > 0 ? (
                     notifications.map((notification, index) => (

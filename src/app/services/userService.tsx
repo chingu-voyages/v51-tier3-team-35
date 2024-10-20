@@ -41,3 +41,13 @@ export const fetchNotifications = async(userId: string)=> {
     const data = await response.json();
     return data;
 }
+
+export const dismissNotifications = async (userId: string) => {
+  const response = await fetch(`/api/users/${userId}/notifications`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!response.ok) throw new Error("Error dismissing notifications");
+  return response.json();
+};
