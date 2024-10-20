@@ -1,5 +1,4 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { AdventureService } from "../../app/services/adventure-service";
 
 interface Values {
   userEmail: string;
@@ -8,10 +7,10 @@ interface Values {
 interface PopupProps {
   isPopupOpen: boolean;
   closePopup: () => void;
-  adventureId: string;
+  onSubmit?: (values: Values) => void;
 }
 
-const AddUserPopup = ({ isPopupOpen, closePopup, adventureId }: PopupProps) => {
+const AddUserPopup = ({ isPopupOpen, closePopup, onSubmit }: PopupProps) => {
   const validate = (values: Values) => {
     const errors: Partial<Values> = {};
     if (!values.userEmail) {
@@ -20,30 +19,20 @@ const AddUserPopup = ({ isPopupOpen, closePopup, adventureId }: PopupProps) => {
     return errors;
   };
 
-  const handleAddUser = async (values: Values) => {
-    console.log("user Popup is working!");
-    try {
-      console.log("values being sent: ", values);
-      console.log("adventureId is: ", adventureId);
-      await AdventureService.addUserToAdventure(adventureId, values.userEmail);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      console.log("user add completed!");
-      closePopup();
-    }
+  const handleSubmit = async (values: Values) => {
+    onSubmit && onSubmit(values);
   };
 
   return (
     isPopupOpen && (
-      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-10">
-        <div className="bg-white p-6 rounded shadow-lg w-1/3">
-          <h2 className="text-xl mb-4">Add User to Planner</h2>
+      <div className="absolute w-full top-[0] modal-container">
+        <div className="modal-box lg:ml-[30%] mt-[40vh]">
+          <h2 className="text-xl mb-4">Add Collaborator</h2>
           <Formik
             initialValues={{
               userEmail: "",
             }}
-            onSubmit={handleAddUser}
+            onSubmit={handleSubmit}
             validate={validate}
           >
             <Form>

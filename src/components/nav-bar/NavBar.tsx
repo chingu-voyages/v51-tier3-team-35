@@ -106,7 +106,7 @@ export default function NavBar() {
           )}
         </div>
             
-            <Link href="/adventure/new" className="btn btn-primary">
+            <Link href="/adventure/new" className="grape self-center">
               New Adventure
             </Link>
             <div className="dropdown dropdown-end">
