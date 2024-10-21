@@ -1,15 +1,18 @@
 "use client";
 import { Formik } from "formik";
 import Link from "next/link";
+import { CiUser } from "react-icons/ci";
 import { FaGoogle } from "react-icons/fa";
 import { AuthService } from "../../services/auth-service";
-import { CiUser } from "react-icons/ci";
 
 export default function SignupPage() {
   return (
     <div>
       <section className="w-full flex justify-center mb-8">
-        <CiUser size={72}  className=" line-clamp-1 input-bordered text-gray-400 "/>
+        <CiUser
+          size={72}
+          className=" line-clamp-1 input-bordered text-gray-400 "
+        />
       </section>
       <Formik
         initialValues={{
@@ -31,7 +34,6 @@ export default function SignupPage() {
             await AuthService.signInCredentials({
               email: values.email,
               password: values.password,
-              isSigningUp: true,
               callbackUrl: "/home", // TODO: update this to the dashboard page
             });
           } catch (error: any) {
@@ -80,7 +82,9 @@ export default function SignupPage() {
             <div className="w-full flex flex-col gap-y-3">
               {/* inputs  */}
               <section>
-                <label htmlFor="email" className="text-lg font-normal">Email</label>
+                <label htmlFor="email" className="text-lg font-normal">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
@@ -88,7 +92,11 @@ export default function SignupPage() {
                   onBlur={handleBlur}
                   value={values.email}
                   placeholder="E-mail address"
-                  className={`input input-bordered w-full rounded-full ${errors.email && touched.email && errors.email ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${
+                    errors.email && touched.email && errors.email
+                      ? "border-red-500"
+                      : ""
+                  }`}
                 />
                 <div className="text-orange-600 text-sm">
                   {errors.email && touched.email && errors.email}
@@ -96,7 +104,9 @@ export default function SignupPage() {
               </section>
 
               <section>
-                <label htmlFor="name" className="text-lg font-normal">Name</label>
+                <label htmlFor="name" className="text-lg font-normal">
+                  Name
+                </label>
                 <input
                   type="text"
                   name="name"
@@ -104,7 +114,11 @@ export default function SignupPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.name}
-                  className={`input input-bordered w-full rounded-full ${errors.name && touched.name && errors.name ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${
+                    errors.name && touched.name && errors.name
+                      ? "border-red-500"
+                      : ""
+                  }`}
                 />
                 <div className="text-orange-600 text-sm">
                   {errors.name && touched.name && errors.name}
@@ -112,7 +126,9 @@ export default function SignupPage() {
               </section>
 
               <section>
-                <label htmlFor="email" className="font-normal text-lg">Password</label>
+                <label htmlFor="email" className="font-normal text-lg">
+                  Password
+                </label>
                 <input
                   type="password"
                   name="password"
@@ -120,7 +136,11 @@ export default function SignupPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.password}
-                  className={`input input-bordered w-full rounded-full ${errors.password && touched.password && errors.password ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${
+                    errors.password && touched.password && errors.password
+                      ? "border-red-500"
+                      : ""
+                  }`}
                 />
                 <div className="text-orange-600 text-sm">
                   {errors.password && touched.password && errors.password}
@@ -128,7 +148,12 @@ export default function SignupPage() {
               </section>
 
               <section>
-                <label htmlFor="confirmPassword" className="text-lg font-normal">Repeat password</label>
+                <label
+                  htmlFor="confirmPassword"
+                  className="text-lg font-normal"
+                >
+                  Repeat password
+                </label>
                 <input
                   type="password"
                   name="confirmPassword"
@@ -136,7 +161,13 @@ export default function SignupPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.confirmPassword}
-                  className={`input input-bordered w-full rounded-full ${errors.confirmPassword && touched.confirmPassword && errors.confirmPassword ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${
+                    errors.confirmPassword &&
+                    touched.confirmPassword &&
+                    errors.confirmPassword
+                      ? "border-red-500"
+                      : ""
+                  }`}
                 />
                 <div className="text-orange-600">
                   {errors.confirmPassword &&
@@ -145,7 +176,7 @@ export default function SignupPage() {
                 </div>
               </section>
               {/* btns */}
-              <section className="flex flex-col gap-y-2">  
+              <section className="flex flex-col gap-y-2">
                 <button
                   type="submit"
                   className="btn btn-primary rounded-full"

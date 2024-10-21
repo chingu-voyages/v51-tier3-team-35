@@ -46,7 +46,7 @@ export async function PUT(
     // Push the notes onto the occurrence
     const comment: UserComment = {
       text: requestBody.text,
-      createdBy: session.user?._id.toString()!,
+      createdBy: session.user!._id.toString()!,
       adventureId: params.adventureId,
       occurrenceId: params.occurrenceId,
     };
