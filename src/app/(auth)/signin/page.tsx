@@ -4,10 +4,9 @@ import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FaGoogle } from "react-icons/fa";
 import { CiUser } from "react-icons/ci";
+import { FaGoogle } from "react-icons/fa";
 import { AuthService } from "../../services/auth-service";
-
 
 export default function SigninPage() {
   const [apiError, setApiError] = useState<string | null>(null);
@@ -22,7 +21,10 @@ export default function SigninPage() {
   return (
     <div>
       <section className="w-full flex justify-center mb-12">
-        <CiUser size={72}  className=" line-clamp-1 input-bordered text-gray-400 "/>
+        <CiUser
+          size={72}
+          className=" line-clamp-1 input-bordered text-gray-400 "
+        />
       </section>
       <Formik
         initialValues={{
@@ -35,7 +37,6 @@ export default function SigninPage() {
           const res = await AuthService.signInCredentials({
             email: values.email,
             password: values.password,
-            isSigningUp: false,
             redirect: false,
             callbackUrl: callbackUrl,
           });
@@ -72,14 +73,20 @@ export default function SigninPage() {
           <form onSubmit={handleSubmit}>
             <div className="w-full flex flex-col gap-y-6">
               <section>
-                <label className="font-normal text-lg py-" htmlFor="email">Email</label>
+                <label className="font-normal text-lg py-" htmlFor="email">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.email}
-                  className={`input input-bordered w-full rounded-full ${errors.email && touched.email && errors.email ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${
+                    errors.email && touched.email && errors.email
+                      ? "border-red-500"
+                      : ""
+                  }`}
                   placeholder="E-mail address"
                 />
                 <div className="text-orange-600 text-sm">
@@ -88,14 +95,20 @@ export default function SigninPage() {
               </section>
 
               <section>
-                <label className="font-normal text-lg" htmlFor="password">Password</label>
+                <label className="font-normal text-lg" htmlFor="password">
+                  Password
+                </label>
                 <input
                   type="password"
                   name="password"
                   onChange={handleChange}
                   onBlur={handleBlur}
                   value={values.password}
-                  className={`input input-bordered w-full rounded-full ${errors.password && touched.password && errors.password ?'border-red-500':""}`}
+                  className={`input input-bordered w-full rounded-full ${
+                    errors.password && touched.password && errors.password
+                      ? "border-red-500"
+                      : ""
+                  }`}
                   placeholder="Password"
                 />
                 <div className="text-orange-600 text-sm">
@@ -104,10 +117,12 @@ export default function SigninPage() {
               </section>
 
               {/* API Errors here */}
-              {apiError && <div className="text-red-600 text-sm">{apiError}</div>}
-              
+              {apiError && (
+                <div className="text-red-600 text-sm">{apiError}</div>
+              )}
+
               {/* btns  */}
-              <section className="w-full flex flex-col gap-y-2"> 
+              <section className="w-full flex flex-col gap-y-2">
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -116,7 +131,10 @@ export default function SigninPage() {
                   Sign in
                 </button>
                 <p className="text-center text-sm">Or</p>
-                <button className="btn rounded-full" onClick={handleGoogleSignIn}>
+                <button
+                  className="btn rounded-full"
+                  onClick={handleGoogleSignIn}
+                >
                   <FaGoogle /> Continue with Google
                 </button>
               </section>
