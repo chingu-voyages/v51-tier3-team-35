@@ -24,13 +24,11 @@ export const AuthService = {
   signInCredentials: async ({
     email,
     password,
-    isSigningUp = false,
     callbackUrl,
     redirect = true,
   }: {
     email: string;
     password: string;
-    isSigningUp: boolean;
     callbackUrl?: string;
     redirect?: boolean;
   }): Promise<{ status: "success" | "fail"; message?: string }> => {

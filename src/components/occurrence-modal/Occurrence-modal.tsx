@@ -61,24 +61,28 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               title="Description"
               text={description}
               placeholder="Description"
+              key={"travel-description"}
               setText={setDescription}
             />,
             <FreeTextSection
               title="Notes"
               text={notes}
               placeholder="Notes"
+              key={"travel-notes"}
               setText={setNotes}
             />,
 
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              key={"travel-comments-container"}
             />,
             <DeleteOccurrenceButton
               creating={props.creating}
               onClicked={() => {
                 setConfirmDeleteModalOpen(true);
               }}
+              key={"travel-delete-button"}
             />,
           ]
         );
@@ -94,23 +98,27 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               title="Description"
               text={description}
               placeholder="Description"
+              key={"accommodation-description"}
               setText={setDescription}
             />,
             <FreeTextSection
               title="Notes"
               text={notes}
               placeholder="Notes"
+              key={"accommodation-notes"}
               setText={setNotes}
             />,
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              key={"accommodation-comments-container"}
             />,
             <DeleteOccurrenceButton
               creating={props.creating}
               onClicked={() => {
                 setConfirmDeleteModalOpen(true);
               }}
+              key={"accommodation-delete-button"}
             />,
           ]
         );
@@ -127,22 +135,26 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               text={description}
               placeholder="Description"
               setText={setDescription}
+              key={"activity-description"}
             />,
             <FreeTextSection
               title="Notes"
               text={notes}
               placeholder="Notes"
               setText={setNotes}
+              key={"activity-notes"}
             />,
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              key={"activity-comments-container"}
             />,
             <DeleteOccurrenceButton
               creating={props.creating}
               onClicked={() => {
                 setConfirmDeleteModalOpen(true);
               }}
+              key={"activity-delete-button"}
             />,
           ]
         );
@@ -159,16 +171,19 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               text={description}
               placeholder="Description"
               setText={setDescription}
+              key={"food-description"}
             />,
             <FreeTextSection
               title="Notes"
               text={notes}
               placeholder="Notes"
               setText={setNotes}
+              key={"food-notes"}
             />,
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              key={"food-comments-container"}
             />,
 
             <DeleteOccurrenceButton
@@ -176,6 +191,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
               onClicked={() => {
                 setConfirmDeleteModalOpen(true);
               }}
+              key={"food-delete-button"}
             />,
           ]
         );
