@@ -1,45 +1,49 @@
-# voyage-tasks
+# TravelIt
 
-Your project's `readme` is as important to success as your code. For
-this reason you should put as much care into its creation and maintenance
-as you would any other component of the application.
+## About
 
-If you are unsure of what should go into the `readme` let this article,
-written by an experienced Chingu, be your starting point -
-[Keys to a well written README](https://tinyurl.com/yk3wubft).
+TravelIt is an interactive, collaborative planner app that allows you to create an itenerary for your travel adventure, and invite friends to collaborate on it.
 
-And before we go there's "one more thing"! Once you decide what to include
-in your `readme` feel free to replace the text we've provided here.
+![screenshot](/docs/screencaps/img.png)
 
-> Own it & Make it your Own!
+### Features
 
-## Team Documents
+- User accounts (credentials, Google Auth)
+- Create an adventure by giving it a name, duration and description
+- Create/delete different event types on the calendar (food, activity, accommodation, travel)
+- Create notes for a specific event
+- Users can post comments in a single thread on an event
+- Invite users to collaborate by entering their e-mail
+- Be notified when you have been invited to collaborate
 
-You may find these helpful as you work together to organize your project.
+## Tech Stack
 
-- [Team Project Ideas](./docs/team_project_ideas.md)
-- [Team Decision Log](./docs/team_decision_log.md)
+- NextJS, React-Typescript
+- MongoDb
+- [react-big-calendar](https://www.npmjs.com/package/react-big-calendar) - the calendar library used.
+- Google Maps geolocation
 
-Meeting Agenda templates (located in the `/docs` directory in this repo):
+## Dev environment setup
 
-- Meeting - Voyage Kickoff --> ./docs/meeting-voyage_kickoff.docx
-- Meeting - App Vision & Feature Planning --> ./docs/meeting-vision_and_feature_planning.docx
-- Meeting - Sprint Retrospective, Review, and Planning --> ./docs/meeting-sprint_retrospective_review_and_planning.docx
-- Meeting - Sprint Open Topic Session --> ./docs/meeting-sprint_open_topic_session.docx
+### Environment variables
+
+- `GOOGLE_CLIENT_ID`= # See google cloud console
+- `GOOGLE_CLIENT_SECRET`= # See google cloud console
+- `NEXTAUTH_SECRET`= #random characters you can create to use for the JWT
+- `MONGODB_URI`= # mongo connection string
+- `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`=See google cloud console
+
+### Setup
+
+- Clone repo, run `npm i` to install dependencies
+- Create `.env` file at top level of the repo.
+- Setup a mongoDb instances if you haven't already (Atlas is preferred)
+- Enable google APIs including Maps and Oauth. Obtain relavent API keys from those services
+
+- Run the dev environment with `npm run dev`
 
 ## Our Team
 
-Everyone on your team should add their name along with a link to their GitHub
-& optionally their LinkedIn profiles below. Do this in Sprint #1 to validate
-your repo access and to practice PR'ing with your team _before_ you start
-coding!
-
-- David Eastmond: [GitHub](https://github.com/davideastmond) / [LinkedIn](https://www.linkedin.com/in/david-eastmond-2783ab18a/)
-- Wei-Teck Lee: [GitHub](https://github.com/weitecklee) / [LinkedIn](https://www.linkedin.com/in/weitecklee/)
-- Brian Stasiukaitis [GitHub](https://github.com/BrianStas) / [LinkedIn](https://www.linkedin.com/in/brian-stasiukaitis)
-
-- Yhormi A #2: [GitHub](https://github.com/LootingMonk) / [LinkedIn](https://www.linkedin.com/in/yomiajayi/)
-
-  ...
-
-- Teammate name #n: [GitHub](https://github.com/ghaccountname) / [LinkedIn](https://linkedin.com/in/liaccountname)
+- David Eastmond (Developer) [GitHub](https://github.com/davideastmond) / [LinkedIn](https://www.linkedin.com/in/david-eastmond-2783ab18a/)
+- Brian Stasiukaitis (Developer) [GitHub](https://github.com/BrianStas) / [LinkedIn](https://www.linkedin.com/in/brian-stasiukaitis)
+- Yhormi A (Scrum Master) [GitHub](https://github.com/LootingMonk) / [LinkedIn](https://www.linkedin.com/in/yomiajayi/)
