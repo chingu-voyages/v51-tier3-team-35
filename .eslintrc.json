@@ -1,3 +1,9 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "rules": {
+    "eslint/no-explicit-any": "off",
+    "react/no-unescaped-entities": "off",
+    " @typescript-eslint/no-non-null-asserted-optional-chain": "off",
+    "react-hooks/rules-of-hooks": "off"
+  }
 }

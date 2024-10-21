@@ -37,7 +37,6 @@ export default function ViewEditAdventurePage() {
   );
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   const router = useRouter();
   const { status } = useSession();
