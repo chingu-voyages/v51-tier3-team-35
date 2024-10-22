@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { User } from "../models/user.model";
+import { userNotificationSchema } from "./user-notification.schema";
 
 const userSchema = new Schema<User>(
   {
@@ -24,7 +25,7 @@ const userSchema = new Schema<User>(
       type: String,
     },
     notifications: {
-      type: [String],
+      type: [userNotificationSchema],
       default: [],
       validate: [notificationLimit, "Cannot have more than 3 notifications"],
     },

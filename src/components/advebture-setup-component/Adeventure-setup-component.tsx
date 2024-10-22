@@ -206,6 +206,11 @@ export function AdventureSetupComponent({
                   {creating ? "Create" : "Update"}
                 </button>
               </div>
+              {isSubmitting && (
+                <div className="flex justify-center">
+                  <span className="loading loading-spinner loading-lg"></span>
+                </div>
+              )}
             </form>
           )}
         </Formik>
