@@ -6,6 +6,8 @@ export class NotificationFactory {
     switch (userNotification.notificationType) {
       case "addToAdventure":
         return this.createAddToAdventureNotification(userNotification);
+      case "occurrenceComment":
+        return this.createUserCommentedPostedNotification(userNotification);
       default:
         return this.createDefaultNotification(
           userNotification as unknown as string
@@ -18,7 +20,7 @@ export class NotificationFactory {
   ): JSX.Element {
     // Format is "url[sourceUser.name] added you to an url[adventure]"
     return (
-      <div key={userNotification._id} className="text-neutral-600 text-sm ">
+      <div key={userNotification._id} className="text-neutral-600 text-sm">
         <p>
           {userNotification.sourceUser.name} added you to{" "}
           <a href={userNotification.link?.href}>
@@ -29,8 +31,25 @@ export class NotificationFactory {
     );
   }
 
+  private createUserCommentedPostedNotification(
+    userNotification: UserNotification
+  ): JSX.Element {
+    // the notification is a string
+    return (
+      <div key={userNotification._id} className="text-neutral-600 text-sm">
+        <p>
+          <b>{userNotification.sourceUser.name}</b> posted a comment in{" "}
+          <a href={userNotification.link?.href}>
+            {userNotification.link?.label}{" "}
+          </a>
+          on a {userNotification.messageBody} event.
+        </p>
+      </div>
+    );
+  }
+
   private createDefaultNotification(userNotification: string): JSX.Element {
     // the notification is a string
-    return <p>{userNotification}</p>;
+    return <p>"default notification"</p>;
   }
 }

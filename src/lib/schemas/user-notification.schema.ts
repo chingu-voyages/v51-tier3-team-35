@@ -39,7 +39,7 @@ export const userNotificationSchema = new Schema<UserNotification>(
     },
     notificationType: {
       type: String,
-      enum: ["addToAdventure", "comment"],
+      enum: ["addToAdventure", "occurrenceComment"],
       required: true,
     },
   },

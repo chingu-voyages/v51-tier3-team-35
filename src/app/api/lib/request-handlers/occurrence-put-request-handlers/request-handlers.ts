@@ -10,7 +10,7 @@ import {
   TravelOccurrence,
 } from "../../../../../lib/models/occurrence.model";
 import { OccurrenceApiWriteRequest } from "../../../../services/definitions";
-import { AdventureDocument } from "../definitions";
+import { AdventureDocument } from "../../definitions/definitions";
 import { BaseOccurrencePutRequestHandler } from "./base-occurrence-put-request-handler";
 
 export const TravelOccurrenceApiPutRequestHandler: BaseOccurrencePutRequestHandler<TravelOccurrenceSubmitData> =

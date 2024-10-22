@@ -58,7 +58,7 @@ export async function PATCH(
         name: user.name,
       },
       link: {
-        href: `/adventure/${adventure._id}/view`,
+        href: `/adventure/view/${adventure._id}`,
         label: adventure.name,
       },
       messageBody: "",

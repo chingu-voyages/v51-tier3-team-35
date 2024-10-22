@@ -18,4 +18,4 @@ export type UserNotification = {
   updatedAt?: Date;
 };
 
-export type NotificationType = "addToAdventure" | "comment";
+export type NotificationType = "addToAdventure" | "occurrenceComment";

@@ -10,7 +10,7 @@ import {
   TravelOccurrence,
 } from "../../../../../lib/models/occurrence.model";
 import { OccurrenceApiWriteRequest } from "../../../../services/definitions";
-import { AdventureDocument } from "../definitions";
+import { AdventureDocument } from "../../definitions/definitions";
 import { BaseOccurrencePatchRequestHandler } from "./base-occurrence-patch-request-handler";
 
 export const TravelOccurrenceApiPatchRequestHandler: BaseOccurrencePatchRequestHandler<TravelOccurrenceSubmitData> =
