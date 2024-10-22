@@ -13,8 +13,6 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const userIds = searchParams.getAll("userIds");
 
-  console.log("14 User IDs: ", userIds);
-
   await dbConnect();
   try {
     const users = await UserModel.find({ _id: { $in: userIds } });
