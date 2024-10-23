@@ -16,9 +16,15 @@ export const AdventureService = {
 
   async getAdventureById(id: string): Promise<Adventure> {
     const res = await fetch(`/api/adventure/${id}`);
+    const responseBody = await res.json();
     if (res.ok) {
-      return await res.json();
+      return responseBody;
     }
+
+    if ("error" in responseBody) {
+      throw new Error(responseBody.error);
+    }
+
     throw new Error("Failed to fetch adventure");
   },
 
@@ -179,7 +185,7 @@ export const AdventureService = {
     }
   },
   addUserToAdventure: async (
-    adventureId: string, 
+    adventureId: string,
     email: string
   ): Promise<void> => {
     const res = await fetch(`/api/adventure/${adventureId}/participants`, {
@@ -192,5 +198,5 @@ export const AdventureService = {
     if (!res.ok) {
       throw new Error("Failed to add user to adventure");
     }
-  }
+  },
 };

@@ -53,14 +53,11 @@ export default function ViewEditAdventurePage() {
   const [adventureConfigModalOpen, setAdventureConfigModalOpen] =
     useState(false);
   const isPageVisible = usePageVisibility();
+  const [apiError, setApiError] = useState<string | null>(null);
   const timerIdRef = useRef<any>(null);
 
   useEffect(() => {
-    try {
-      fetchAdventureById();
-    } catch (error: any) {
-      console.error("Error fetching adventure", error);
-    }
+    fetchAdventureById();
   }, []);
 
   useEffect(() => {
@@ -79,14 +76,24 @@ export default function ViewEditAdventurePage() {
   const localizer = dayjsLocalizer(dayjs);
 
   const fetchAdventureById = async () => {
-    const result = await AdventureService.getAdventureById(params.adventureId);
+    try {
+      const result = await AdventureService.getAdventureById(
+        params.adventureId
+      );
 
-    setAdventure(result);
+      setAdventure(result);
 
-    const mappedEvents = result.occurrences.map((occurrence) =>
-      adaptToReactBigCalendarEvent(occurrence)
-    );
-    setEventOccurrences(mappedEvents);
+      const mappedEvents = result.occurrences.map((occurrence) =>
+        adaptToReactBigCalendarEvent(occurrence)
+      );
+      setEventOccurrences(mappedEvents);
+    } catch (error: any) {
+      setToastType("error");
+      setToastMessage(error.message);
+      setToastVisible(true);
+      setApiError("There was an error. Please refresh the page.");
+      setIsPollingEnabled(false);
+    }
 
     // TODO: Redirect to an error page?
   };
@@ -261,6 +268,26 @@ export default function ViewEditAdventurePage() {
 
   return (
     <div className="p-4">
+      {apiError && (
+        <div role="alert" className="alert alert-error">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>
+            We could not complete this request. Please try again later.
+          </span>
+        </div>
+      )}
       <div className="items-center mt-4 mb-4 flex justify-center">
         <p className="text-xl font-bold">{adventure?.name}</p>
       </div>
