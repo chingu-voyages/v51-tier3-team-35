@@ -137,6 +137,7 @@ export function CollaboratorsModal({ closePopup, adventureId }: Props) {
             </Form>
           </Formik>
         </div>
+        <div className="divider"></div>
         <div>
           {/* Current collaborators section */}
           <h2 className="text-xl mb-4">Current Collaborators</h2>
@@ -149,16 +150,19 @@ export function CollaboratorsModal({ closePopup, adventureId }: Props) {
               Remove All
             </button>
           </div>
-          <div style={{ maxHeight: "500px", overflowY: "auto" }}>
-            {adventureContext?.participants.map((participant, index) => (
+          <div
+            className="collaborator-card-container"
+            style={{ maxHeight: "500px", overflowY: "auto" }}
+          >
+            {adventureContext?.participants.map((participantId) => (
               <CollaboratorCard
-                key={participant}
-                _id={participant}
-                displayName={`${index + 1}. ${userMap[participant]?.name}`}
-                emailAddress={userMap[participant]?.email}
+                key={participantId}
+                _id={participantId}
+                displayName={`${userMap[participantId]?.name}`}
+                emailAddress={userMap[participantId]?.email}
                 onRemove={handleRemoveParticipant}
-                ownerId={session?.user?._id!}
                 isBusy={isBusy}
+                isOwner={adventureContext?.createdBy === participantId}
               />
             ))}
           </div>
@@ -175,14 +179,14 @@ const CollaboratorCard = ({
   emailAddress,
   onRemove,
   isBusy,
-  ownerId,
+  isOwner,
 }: {
   _id: string;
   displayName: string;
   emailAddress: string;
   onRemove?: (_id: string) => void;
   isBusy?: boolean;
-  ownerId: string;
+  isOwner: boolean;
 }) => {
   return (
     <div
@@ -194,10 +198,11 @@ const CollaboratorCard = ({
         style={{ padding: "0" }}
       >
         <p>
-          {displayName} {_id === ownerId && "(owner)"}
+          {displayName} {isOwner && "(owner)"}
         </p>
-        {_id !== ownerId && <p>{emailAddress}</p>}
-        {_id !== ownerId && (
+        {!isOwner && <p>{emailAddress}</p>}
+
+        {!isOwner && (
           <button
             className="text-red-600"
             disabled={isBusy}
