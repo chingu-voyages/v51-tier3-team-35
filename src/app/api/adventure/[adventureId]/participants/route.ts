@@ -13,10 +13,10 @@ export async function PATCH(
   { params }: { params: { adventureId: string } }
 ) {
   const session = await getServerSession(authOptions);
-  const data = await req.json();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const data = await req.json();
 
   if (!data.action)
     return NextResponse.json({ error: "Action is required" }, { status: 400 });
@@ -33,42 +33,41 @@ export async function PATCH(
       );
     }
 
-    if (data.action === "add") {
-      await addUserToAdventure(
-        adventure,
-        data.email,
-        session?.user?._id!,
-        session?.user?.name!
-      );
-      return NextResponse.json(
-        { message: "User added successfully" },
-        { status: 200 }
-      );
-    } else if (data.action === "remove") {
-      if (!data.userId) {
+    switch (data.action) {
+      case "add":
+        await addUserToAdventure(
+          adventure,
+          data.email,
+          session?.user?._id!,
+          session?.user?.name!
+        );
         return NextResponse.json(
-          { error: "userId is required for remove action" },
+          { message: "User added successfully" },
+          { status: 200 }
+        );
+      case "remove":
+        if (!data.userId) {
+          return NextResponse.json(
+            { error: "userId is required for remove action" },
+            { status: 400 }
+          );
+        }
+        await removeUserFromAdventure(adventure, data.userId);
+        return NextResponse.json({ message: "User removed" }, { status: 200 });
+      case "removeAll":
+        await removeAllParticipants(adventure);
+        return NextResponse.json(
+          { message: "All participants removed" },
+          { status: 200 }
+        );
+      default:
+        return NextResponse.json(
+          {
+            error: `Action ${data.action} not supported`,
+          },
           { status: 400 }
         );
-      }
-      await removeUserFromAdventure(adventure, data.userId);
-      return NextResponse.json({ message: "User removed" }, { status: 200 });
-    } else if (data.action === "removeAll") {
-      await removeAllParticipants(adventure);
-      return NextResponse.json(
-        { message: "All participants removed" },
-        { status: 200 }
-      );
     }
-
-    // Handle the request
-
-    return NextResponse.json(
-      {
-        error: `Action ${data.action} not supported`,
-      },
-      { status: 400 }
-    );
   } catch (error: any) {
     return NextResponse.json(
       { error: `Failed to add adventure user: ${error}` },
