@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { UserInfoAPIResponse } from "../../lib/definitions/user-info-api-response";
 import { Adventure } from "../../lib/models/adventure.model";
 import { AdventureService } from "../services/adventure-service";
 
@@ -12,16 +13,28 @@ export default function HomePage() {
   const router = useRouter();
   const [userAdventures, setUserAdventures] = useState<Adventure[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [nameMap, setNameMap] = useState<Record<string, UserInfoAPIResponse>>(
+    {}
+  );
 
   useEffect(() => {
     fetchAdventuresByUser();
-  }, [userAdventures.length]);
+  }, [userAdventures.length, Object.keys(nameMap).length]);
 
   const fetchAdventuresByUser = async () => {
     try {
       setIsLoading(true);
       const result = await AdventureService.getAdventuresByUser();
       setUserAdventures(result);
+
+      // We need to get the names
+      const adventureIds = result.map((adventure) => adventure.createdBy);
+      if (adventureIds && adventureIds.length > 0) {
+        const userNameMap = await AdventureService.getUserInfoByIds(
+          adventureIds as string[]
+        );
+        setNameMap(userNameMap);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -65,11 +78,14 @@ export default function HomePage() {
                           isLoading ? "disabled pointer-events-none" : ""
                         }`}
                       >
-                        <h3 className="text-lg font-bold">{adventure.name}</h3>
+                        <h3 className="text-lg font-bold">{adventure.name} </h3>
                         <p>{adventure.description}</p>
                         <p>
-                          Created{" "}
-                          {dayjs(adventure.createdAt).format("YYYY-MMM-DD")}
+                          Created by <b>{nameMap[adventure.createdBy]?.name}</b>{" "}
+                          {""}
+                          on {dayjs(adventure.createdAt).format(
+                            "YYYY-MMM-DD"
+                          )}{" "}
                         </p>
                       </Link>
                     </div>

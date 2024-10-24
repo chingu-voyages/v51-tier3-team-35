@@ -9,7 +9,7 @@ import { CiSettings } from "react-icons/ci";
 import { HiUserAdd } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
 import { AdventureSetupComponent } from "../../../../components/advebture-setup-component/Adeventure-setup-component";
-import AddUserPopup from "../../../../components/nav-bar/AddUserPopup";
+import { CollaboratorsModal } from "../../../../components/collaborators-modal/Collaborators-Modal";
 import { OccurrenceSubmissionData } from "../../../../components/occurrence-modal/definitions";
 import { OccurrenceModal } from "../../../../components/occurrence-modal/Occurrence-modal";
 import { OccurrenceToolbar } from "../../../../components/occurrence-toolbar/Occurrence-toolbar";
@@ -53,14 +53,11 @@ export default function ViewEditAdventurePage() {
   const [adventureConfigModalOpen, setAdventureConfigModalOpen] =
     useState(false);
   const isPageVisible = usePageVisibility();
+  const [apiError, setApiError] = useState<string | null>(null);
   const timerIdRef = useRef<any>(null);
 
   useEffect(() => {
-    try {
-      fetchAdventureById();
-    } catch (error: any) {
-      console.error("Error fetching adventure", error);
-    }
+    fetchAdventureById();
   }, []);
 
   useEffect(() => {
@@ -79,14 +76,24 @@ export default function ViewEditAdventurePage() {
   const localizer = dayjsLocalizer(dayjs);
 
   const fetchAdventureById = async () => {
-    const result = await AdventureService.getAdventureById(params.adventureId);
+    try {
+      const result = await AdventureService.getAdventureById(
+        params.adventureId
+      );
 
-    setAdventure(result);
+      setAdventure(result);
 
-    const mappedEvents = result.occurrences.map((occurrence) =>
-      adaptToReactBigCalendarEvent(occurrence)
-    );
-    setEventOccurrences(mappedEvents);
+      const mappedEvents = result.occurrences.map((occurrence) =>
+        adaptToReactBigCalendarEvent(occurrence)
+      );
+      setEventOccurrences(mappedEvents);
+    } catch (error: any) {
+      setToastType("error");
+      setToastMessage(error.message);
+      setToastVisible(true);
+      setApiError("There was an error. Please refresh the page.");
+      setIsPollingEnabled(false);
+    }
 
     // TODO: Redirect to an error page?
   };
@@ -190,25 +197,6 @@ export default function ViewEditAdventurePage() {
       console.error("Error fetching/refreshing adventureData", error);
     }
   };
-
-  const handleAddCollaborator = async (values: { userEmail: string }) => {
-    try {
-      await AdventureService.addUserToAdventure(
-        params.adventureId,
-        values.userEmail
-      );
-      closePopup();
-      setToastMessage("Collaborator added successfully");
-      setToastType("success");
-      setToastVisible(true);
-    } catch (error: any) {
-      closePopup();
-      setToastMessage("Unable to add collaborator");
-      setToastType("error");
-      setToastVisible(true);
-    }
-  };
-
   useEffect(() => {
     const pollingCallBack = async () => {
       try {
@@ -261,6 +249,26 @@ export default function ViewEditAdventurePage() {
 
   return (
     <div className="p-4">
+      {apiError && (
+        <div role="alert" className="alert alert-error">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>
+            We could not complete this request. Please try again later.
+          </span>
+        </div>
+      )}
       <div className="items-center mt-4 mb-4 flex justify-center">
         <p className="text-xl font-bold">{adventure?.name}</p>
       </div>
@@ -285,18 +293,19 @@ export default function ViewEditAdventurePage() {
           <div>
             <button type="button" className="" onClick={openPopup}>
               <div className="flex items-center gap-x-2">
-                <p className="grape">Add Collaborator</p>
+                <p className="grape">Collaborators</p>
                 <HiUserAdd className="text-2xl grape" />
               </div>
             </button>
           </div>
         </div>
       </div>
-      <AddUserPopup
-        isPopupOpen={isPopupOpen}
-        closePopup={closePopup}
-        onSubmit={handleAddCollaborator}
-      />
+      {isPopupOpen && adventure && (
+        <CollaboratorsModal
+          closePopup={closePopup}
+          adventureId={adventure?._id!}
+        />
+      )}
       <div>
         <Calendar
           date={currentDate.toDate()}

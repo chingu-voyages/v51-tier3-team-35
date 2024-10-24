@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { AdventureService } from "../../app/services/adventure-service";
+
+import { UserInfoAPIResponse } from "../../lib/definitions/user-info-api-response";
 import {
   AccommodationOccurrence,
   ActivityOccurrence,
@@ -222,13 +224,13 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
 
   const fetchUserNames = async (
     occurrence: Occurrence
-  ): Promise<Record<string, string>> => {
+  ): Promise<Record<string, UserInfoAPIResponse>> => {
     // Extract the user ids from the comments and put them into a set
 
     const userIds = extractUserIds(occurrence);
 
     if (userIds.length === 0) return {};
-    return AdventureService.getUserNamesByIds(userIds);
+    return AdventureService.getUserInfoByIds(userIds);
   };
 
   const extractUserIds = (occurrence: Occurrence): string[] => {
@@ -276,12 +278,12 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
 
   const renderCommentStack = (
     occurence: Occurrence,
-    idNameDictionary: Record<string, string>
+    idNameDictionary: Record<string, UserInfoAPIResponse>
   ): StackerComment[] => {
     return occurence.userComments!.map((c) => {
       return {
         ...c,
-        name: idNameDictionary[c.createdBy],
+        name: idNameDictionary[c.createdBy].name,
       };
     });
   };
