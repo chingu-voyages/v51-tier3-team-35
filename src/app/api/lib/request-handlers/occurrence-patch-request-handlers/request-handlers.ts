@@ -26,8 +26,6 @@ export const TravelOccurrenceApiPatchRequestHandler: BaseOccurrencePatchRequestH
       occurrenceDocument.title = title;
       occurrenceDocument.description = description;
       occurrenceDocument.notes = notes;
-
-      console.info("30 requestBody", requestBody);
       occurrenceDocument.method = data.travelMethod;
 
       if (data?.startLocation) {
