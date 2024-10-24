@@ -9,7 +9,7 @@ import { CiSettings } from "react-icons/ci";
 import { HiUserAdd } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
 import { AdventureSetupComponent } from "../../../../components/advebture-setup-component/Adeventure-setup-component";
-import AddUserPopup from "../../../../components/nav-bar/AddUserPopup";
+import { CollaboratorsModal } from "../../../../components/collaborators-modal/Collaborators-Modal";
 import { OccurrenceSubmissionData } from "../../../../components/occurrence-modal/definitions";
 import { OccurrenceModal } from "../../../../components/occurrence-modal/Occurrence-modal";
 import { OccurrenceToolbar } from "../../../../components/occurrence-toolbar/Occurrence-toolbar";
@@ -197,25 +197,6 @@ export default function ViewEditAdventurePage() {
       console.error("Error fetching/refreshing adventureData", error);
     }
   };
-
-  const handleAddCollaborator = async (values: { userEmail: string }) => {
-    try {
-      await AdventureService.addUserToAdventure(
-        params.adventureId,
-        values.userEmail
-      );
-      closePopup();
-      setToastMessage("Collaborator added successfully");
-      setToastType("success");
-      setToastVisible(true);
-    } catch (error: any) {
-      closePopup();
-      setToastMessage("Unable to add collaborator");
-      setToastType("error");
-      setToastVisible(true);
-    }
-  };
-
   useEffect(() => {
     const pollingCallBack = async () => {
       try {
@@ -312,18 +293,19 @@ export default function ViewEditAdventurePage() {
           <div>
             <button type="button" className="" onClick={openPopup}>
               <div className="flex items-center gap-x-2">
-                <p className="grape">Add Collaborator</p>
+                <p className="grape">Collaborators</p>
                 <HiUserAdd className="text-2xl grape" />
               </div>
             </button>
           </div>
         </div>
       </div>
-      <AddUserPopup
-        isPopupOpen={isPopupOpen}
-        closePopup={closePopup}
-        onSubmit={handleAddCollaborator}
-      />
+      {isPopupOpen && adventure && (
+        <CollaboratorsModal
+          closePopup={closePopup}
+          adventureId={adventure?._id!}
+        />
+      )}
       <div>
         <Calendar
           date={currentDate.toDate()}
