@@ -201,7 +201,7 @@ export const AdventureService = {
     }
   },
 
-  removeUserFromAdventure: async (
+  removeOneParticipant: async (
     adventureId: string,
     userId: string
   ): Promise<void> => {

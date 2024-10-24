@@ -57,7 +57,7 @@ export function CollaboratorsModal({ closePopup, adventureId }: Props) {
     setApiError(null);
     try {
       setIsBusy(true);
-      await AdventureService.removeUserFromAdventure(adventureId, _id);
+      await AdventureService.removeOneParticipant(adventureId, _id);
       await fetchAdventure(); // Refresh
     } catch (error: any) {
       setApiError(error.message);
