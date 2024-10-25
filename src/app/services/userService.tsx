@@ -1,3 +1,4 @@
+import { UserNotification } from "../../lib/models/user-notification.model";
 import { User } from "../../lib/models/user.model";
 
 export const fetchUserProfile = async (
@@ -34,13 +35,13 @@ export const updateUserProfile = async ({
 
 export const fetchNotifications = async (
   userId: string
-): Promise<{ notifications: string[] }> => {
+): Promise<{ notifications: UserNotification[] }> => {
   const response = await fetch(`/api/users/${userId}/notifications`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
   if (!response.ok) throw new Error("Error fetching user notifications");
-  return (await response.json()) as { notifications: string[] };
+  return (await response.json()) as { notifications: UserNotification[] };
 };
 
 export const dismissNotifications = async (userId: string): Promise<void> => {

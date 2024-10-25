@@ -1,3 +1,5 @@
+import { UserNotification } from "./user-notification.model";
+
 export type User = {
   _id?: string;
   name: string;
@@ -6,6 +8,6 @@ export type User = {
   createdAt: Date;
   updatedAt: Date;
   email: string;
-  notifications: string[];
+  notifications: UserNotification[];
   avatarUrl?: string;
 };

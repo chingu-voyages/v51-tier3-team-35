@@ -1,5 +1,5 @@
 import { OccurrenceApiWriteRequest } from "../../../../services/definitions";
-import { AdventureDocument } from "../definitions";
+import { AdventureDocument } from "../../definitions/definitions";
 
 export interface BaseOccurrencePatchRequestHandler<T> {
   handle(

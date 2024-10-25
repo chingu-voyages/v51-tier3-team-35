@@ -2,21 +2,24 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { RxAvatar } from "react-icons/rx";
 import {
   dismissNotifications,
   fetchNotifications,
 } from "../../app/services/userService";
+import { UserNotification } from "../../lib/models/user-notification.model";
+import { NotificationFactory } from "../notifications/notification-factory/Notification-factory";
 export default function NavBar() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const timerIdRef = useRef<any>(null);
 
-  const [notifications, setNotifications] = useState<string[]>([]);
+  const [notifications, setNotifications] = useState<UserNotification[]>([]);
   const [isPollingEnabled, setIsPollingEnabled] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const notificationFactory = useMemo(() => new NotificationFactory(), []);
   useEffect(() => {
     const pollingCallBack = async () => {
       try {
@@ -32,7 +35,7 @@ export default function NavBar() {
     };
 
     const startPolling = () => {
-      timerIdRef.current = setInterval(pollingCallBack, 10000);
+      timerIdRef.current = setInterval(pollingCallBack, 4000);
     };
 
     const stopPolling = () => {
@@ -118,20 +121,15 @@ export default function NavBar() {
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg z-50 p-2">
                   <div>
-                    <h2 className="text-lg font-semibold">Notifications</h2>
+                    <h2 className="text-lg font-semibold text-zinc-950">
+                      Notifications
+                    </h2>
 
                     <ul className="mt-2">
                       {notifications.length > 0 ? (
-                        notifications.map((notification, index) => (
-                          <li
-                            key={index}
-                            className="p-2 hover:bg-gray-100 rounded-lg"
-                          >
-                            <p className="text-neutral-700 text-sm">
-                              {notification}
-                            </p>
-                          </li>
-                        ))
+                        notifications.map((notification) =>
+                          notificationFactory.generate(notification)
+                        )
                       ) : (
                         <li className="p-2 text-gray-500">No notifications</li>
                       )}

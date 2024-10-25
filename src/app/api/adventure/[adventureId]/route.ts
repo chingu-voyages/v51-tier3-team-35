@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "../../../../lib/mongodb/mongodb";
 import { AdventureModel } from "../../../../lib/schemas/adventure.schema";
 import authOptions from "../../auth/auth-options";
@@ -25,15 +25,13 @@ export async function GET(
       );
     }
 
-    // Check if the user is a participant. If not, add them to the participants array
+    // Strictly enforce access to the adventure to only participants.
+    // The adventure creator should already be in the participants list.
     if (!adventure.participants.includes(session.user!._id)) {
-      adventure.participants.push(session.user!._id);
-      console.info(
-        `${
-          session.user!._id
-        } is not a participant, adding them to the adventure...`
+      return NextResponse.json(
+        { error: "Access not allowed. Ask the creator for an invite." },
+        { status: 401 }
       );
-      await adventure.save();
     }
 
     return NextResponse.json(adventure, { status: 200 });

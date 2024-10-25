@@ -1,11 +1,22 @@
 "use client";
 import { Formik } from "formik";
 import Link from "next/link";
+import { useState } from "react";
 import { CiUser } from "react-icons/ci";
 import { FaGoogle } from "react-icons/fa";
 import { AuthService } from "../../services/auth-service";
 
 export default function SignupPage() {
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await AuthService.signInGoogle();
+    } catch (error: any) {
+      setApiError(error.message);
+    }
+  };
+
   return (
     <div>
       <section className="w-full flex justify-center mb-8">
@@ -187,9 +198,7 @@ export default function SignupPage() {
                 <p className="text-center text-sm">Or</p>
                 <button
                   className="btn rounded-full"
-                  onClick={() => {
-                    alert("Sign up with Google");
-                  }}
+                  onClick={handleGoogleSignIn}
                 >
                   <FaGoogle /> Continue with Google
                 </button>

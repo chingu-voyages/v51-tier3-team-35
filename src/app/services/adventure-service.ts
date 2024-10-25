@@ -1,3 +1,4 @@
+import { UserInfoAPIResponse } from "../../lib/definitions/user-info-api-response";
 import { Adventure } from "../../lib/models/adventure.model";
 import { EventType, Occurrence } from "../../lib/models/occurrence.model";
 import { OccurrenceApiWriteRequest } from "./definitions";
@@ -16,9 +17,15 @@ export const AdventureService = {
 
   async getAdventureById(id: string): Promise<Adventure> {
     const res = await fetch(`/api/adventure/${id}`);
+    const responseBody = await res.json();
     if (res.ok) {
-      return await res.json();
+      return responseBody;
     }
+
+    if ("error" in responseBody) {
+      throw new Error(responseBody.error);
+    }
+
     throw new Error("Failed to fetch adventure");
   },
 
@@ -154,9 +161,9 @@ export const AdventureService = {
       throw new Error("Failed to add comment");
     }
   },
-  getUserNamesByIds: async (
+  getUserInfoByIds: async (
     userIds: string[]
-  ): Promise<Record<string, string>> => {
+  ): Promise<Record<string, UserInfoAPIResponse>> => {
     // This function accepts an array of user ids and returns a dictionary of user ids to user names
 
     const mappedUserIds = userIds.map((id) => `userIds=${id}`).join("&");
@@ -179,7 +186,7 @@ export const AdventureService = {
     }
   },
   addUserToAdventure: async (
-    adventureId: string, 
+    adventureId: string,
     email: string
   ): Promise<void> => {
     const res = await fetch(`/api/adventure/${adventureId}/participants`, {
@@ -187,10 +194,39 @@ export const AdventureService = {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email: email, action: "add" }),
     });
     if (!res.ok) {
       throw new Error("Failed to add user to adventure");
     }
-  }
+  },
+
+  removeOneParticipant: async (
+    adventureId: string,
+    userId: string
+  ): Promise<void> => {
+    const res = await fetch(`/api/adventure/${adventureId}/participants`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: userId, action: "remove" }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to remove user from adventure");
+    }
+  },
+
+  removeAllParticipants: async (adventureId: string): Promise<void> => {
+    const res = await fetch(`/api/adventure/${adventureId}/participants`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ action: "removeAll" }),
+    });
+    if (!res.ok) {
+      throw new Error("Failed to remove all participants");
+    }
+  },
 };
