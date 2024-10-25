@@ -35,7 +35,7 @@ export default function NavBar() {
     };
 
     const startPolling = () => {
-      timerIdRef.current = setInterval(pollingCallBack, 10000);
+      timerIdRef.current = setInterval(pollingCallBack, 4000);
     };
 
     const stopPolling = () => {
