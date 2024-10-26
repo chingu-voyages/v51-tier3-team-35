@@ -2,7 +2,6 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useCallback, useEffect, useState } from "react";
 import { AdventureService } from "../../app/services/adventure-service";
 
-import { useSession } from "next-auth/react";
 import { VscChromeClose } from "react-icons/vsc";
 import { UserInfoAPIResponse } from "../../lib/definitions/user-info-api-response";
 import { Adventure } from "../../lib/models/adventure.model";
@@ -16,7 +15,6 @@ interface Props {
   closePopup: () => void;
 }
 export function CollaboratorsModal({ closePopup, adventureId }: Props) {
-  const { data: session } = useSession();
   const [isBusy, setIsBusy] = useState(false);
 
   const [adventureContext, setAdventureContext] = useState<Adventure | null>(
