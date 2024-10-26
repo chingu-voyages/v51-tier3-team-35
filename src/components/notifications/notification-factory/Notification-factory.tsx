@@ -9,9 +9,7 @@ export class NotificationFactory {
       case "occurrenceComment":
         return this.createUserCommentedPostedNotification(userNotification);
       default:
-        return this.createDefaultNotification(
-          userNotification as unknown as string
-        );
+        return this.createDefaultNotification();
     }
   }
 
@@ -48,7 +46,7 @@ export class NotificationFactory {
     );
   }
 
-  private createDefaultNotification(userNotification: string): JSX.Element {
+  private createDefaultNotification(): JSX.Element {
     // the notification is a string
     return <p>"default notification"</p>;
   }

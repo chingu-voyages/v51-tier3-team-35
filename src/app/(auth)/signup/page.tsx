@@ -1,19 +1,16 @@
 "use client";
 import { Formik } from "formik";
 import Link from "next/link";
-import { useState } from "react";
 import { CiUser } from "react-icons/ci";
 import { FaGoogle } from "react-icons/fa";
 import { AuthService } from "../../services/auth-service";
 
 export default function SignupPage() {
-  const [apiError, setApiError] = useState<string | null>(null);
-
   const handleGoogleSignIn = async () => {
     try {
       await AuthService.signInGoogle();
     } catch (error: any) {
-      setApiError(error.message);
+      console.error(error.message);
     }
   };
 
