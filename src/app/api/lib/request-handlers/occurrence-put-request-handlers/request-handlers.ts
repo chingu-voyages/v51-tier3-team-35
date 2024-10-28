@@ -21,13 +21,13 @@ export const TravelOccurrenceApiPutRequestHandler: BaseOccurrencePutRequestHandl
       requestBody: OccurrenceApiWriteRequest<TravelOccurrenceSubmitData>
     ): Promise<AdventureDocument> => {
       // Get the start and end date ranges for the calendar
-      const { startDate, endDate, eventType, data, description, title, notes } =
+      const { startTime, endTime, eventType, data, description, title, notes } =
         requestBody;
 
       const travelOccurrence: TravelOccurrence = {
         title,
-        startTime: startDate!,
-        endTime: endDate!,
+        startTime,
+        endTime,
         eventType,
         description,
         createdBy: userId,
@@ -64,14 +64,14 @@ export const AccommodationOccurrenceApiPutRequestHandler: BaseOccurrencePutReque
       adventureDocument: AdventureDocument,
       requestBody: OccurrenceApiWriteRequest<AccommodationOccurrenceSubmitData>
     ) => {
-      const { startDate, endDate, data, notes, title } = requestBody;
+      const { startTime, endTime, data, notes, title } = requestBody;
 
       const accommodationOccurrence: AccommodationOccurrence = {
         title,
         eventType: requestBody.eventType,
         createdBy: userId,
-        startTime: startDate!,
-        endTime: endDate!,
+        startTime,
+        endTime,
         notes,
         location: {
           formatted_address: data.location.formatted_address!,
@@ -99,15 +99,15 @@ export const ActivityOccurrenceApiPutRequestHandler: BaseOccurrencePutRequestHan
       adventureDocument: AdventureDocument,
       requestBody: OccurrenceApiWriteRequest<ActivityOccurrenceSubmitData>
     ) => {
-      const { startDate, endDate, data, description, notes, title } =
+      const { startTime, endTime, data, description, notes, title } =
         requestBody;
 
       const activityOccurrence: ActivityOccurrence = {
         title,
         eventType: requestBody.eventType,
         createdBy: userId,
-        startTime: startDate!,
-        endTime: endDate!,
+        startTime,
+        endTime,
         description,
         notes,
         location: {
