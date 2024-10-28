@@ -50,6 +50,17 @@ export async function PATCH(
   }
 
   const requestBody = await req.json();
+
+  const { startTime, endTime } = requestBody;
+
+  if (!startTime || !endTime) {
+    return NextResponse.json(
+      {
+        error: "Missing required fields: startTime and/or endTime",
+      },
+      { status: 400 }
+    );
+  }
   // Find the occurrence
   await dbConnect();
 
