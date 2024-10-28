@@ -21,12 +21,17 @@ export const TravelOccurrenceApiPatchRequestHandler: BaseOccurrencePatchRequestH
       occurrenceDocument: TravelOccurrence,
       requestBody: OccurrenceApiWriteRequest<TravelOccurrenceSubmitData>
     ): Promise<AdventureDocument> => {
-      const { data, description, title, notes } = requestBody;
+      const { data, description, title, notes, startTime, endTime } =
+        requestBody;
 
+      console.info("TravelOccurrenceApiPatchRequestHandler", requestBody);
       occurrenceDocument.title = title;
       occurrenceDocument.description = description;
       occurrenceDocument.notes = notes;
       occurrenceDocument.method = data.travelMethod;
+
+      occurrenceDocument.startTime = startTime;
+      occurrenceDocument.endTime = endTime;
 
       if (data?.startLocation) {
         occurrenceDocument.startLocation = {
@@ -71,11 +76,15 @@ export const ActivityOccurrencceApiPatchRequestHandler: BaseOccurrencePatchReque
       occurrenceDocument: ActivityOccurrence,
       requestBody: OccurrenceApiWriteRequest<ActivityOccurrenceSubmitData>
     ): Promise<AdventureDocument> => {
-      const { data, description, title, notes } = requestBody;
+      const { data, description, title, notes, startTime, endTime } =
+        requestBody;
 
       occurrenceDocument.title = title;
       occurrenceDocument.description = description;
       occurrenceDocument.notes = notes;
+
+      occurrenceDocument.startTime = startTime;
+      occurrenceDocument.endTime = endTime;
 
       if (data?.location) {
         occurrenceDocument.location = {
@@ -110,11 +119,15 @@ export const AccommodationOccurrenceApiPatchRequestHandler: BaseOccurrencePatchR
       occurrenceDocument: AccommodationOccurrence,
       requestBody: OccurrenceApiWriteRequest<AccommodationOccurrenceSubmitData>
     ): Promise<AdventureDocument> => {
-      const { data, description, title, notes } = requestBody;
+      const { data, description, title, notes, startTime, endTime } =
+        requestBody;
 
       occurrenceDocument.title = title;
       occurrenceDocument.description = description;
       occurrenceDocument.notes = notes;
+
+      occurrenceDocument.startTime = startTime;
+      occurrenceDocument.endTime = endTime;
 
       occurrenceDocument.accommodationName = data.accommodationName;
       occurrenceDocument.checkIn = data.checkIn;
