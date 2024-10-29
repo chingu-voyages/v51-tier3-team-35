@@ -24,7 +24,6 @@ export const TravelOccurrenceApiPatchRequestHandler: BaseOccurrencePatchRequestH
       const { data, description, title, notes, startTime, endTime } =
         requestBody;
 
-      console.info("TravelOccurrenceApiPatchRequestHandler", requestBody);
       occurrenceDocument.title = title;
       occurrenceDocument.description = description;
       occurrenceDocument.notes = notes;
