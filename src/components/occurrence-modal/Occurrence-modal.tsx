@@ -73,7 +73,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
 
     if (res.success === false) {
       setSubmitError(
-        "Verify the start and end dates are within the adventure's start and end dates."
+        res.error.errors.map((e) => e.message).join("\n") || "Invalid dates"
       );
       return;
     }
@@ -120,6 +120,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              creating={props.creating}
               key={"travel-comments-container"}
             />,
             <DeleteOccurrenceButton
@@ -156,6 +157,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              creating={props.creating}
               key={"accommodation-comments-container"}
             />,
             <DeleteOccurrenceButton
@@ -192,6 +194,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              creating={props.creating}
               key={"activity-comments-container"}
             />,
             <DeleteOccurrenceButton
@@ -228,6 +231,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              creating={props.creating}
               key={"food-comments-container"}
             />,
 
