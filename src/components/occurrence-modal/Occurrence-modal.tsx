@@ -62,12 +62,16 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
     setSubmitError(null);
     // We can use zod to validate the input
 
-    const validationSchema = z.object({
-      startDate: z.date().min(new Date(props.adventureData.startDate)),
-      endDate: z.date().max(new Date(props.adventureData.endDate)),
-    });
+    const validationSchema = z
+      .object({
+        startDate: z.date().min(new Date(props.adventureData.startDate)),
+        endDate: z.date().max(new Date(props.adventureData.endDate)),
+      })
+      .refine((data) => new Date(data.startDate) < new Date(data.endDate));
 
-    if (validationSchema.safeParse({ startDate, endDate }).success === false) {
+    const res = validationSchema.safeParse({ startDate, endDate });
+
+    if (res.success === false) {
       setSubmitError(
         "Verify the start and end dates are within the adventure's start and end dates."
       );
