@@ -103,6 +103,8 @@ export default function ViewEditAdventurePage() {
     if (event._id) {
       setSelectedEventId(event._id);
       setSelectedEventType(event.eventType);
+      setSlotStartDate(event.start);
+      setSlotEndDate(event.end);
       setExistingEventModalOpen(true);
     }
   }, []);
@@ -123,15 +125,24 @@ export default function ViewEditAdventurePage() {
       notes,
       description,
       title,
-    }: { notes?: string; description?: string; title: string },
+      startDate,
+      endDate,
+    }: {
+      notes?: string;
+      description?: string;
+      title: string;
+      startDate: Date;
+      endDate: Date;
+    },
     args?: { editing: boolean }
   ) => {
+    // TODO: Add some date validation here
     if (!args?.editing) {
       await AdventureService.createOccurrence({
         eventType: activeTabOption,
         data,
-        startDate: slotStartDate!,
-        endDate: slotEndDate!,
+        startTime: startDate,
+        endTime: endDate,
         adventureId: params.adventureId,
         notes,
         description,
@@ -143,7 +154,14 @@ export default function ViewEditAdventurePage() {
           params.adventureId,
           selectedEventId!,
           selectedEventType!,
-          { notes, title, description, ...data }
+          {
+            notes,
+            title,
+            description,
+            startTime: startDate,
+            endTime: endDate,
+            ...data,
+          }
         );
         setToastMessage("Event updated successfully");
         setToastType("success");
@@ -344,7 +362,8 @@ export default function ViewEditAdventurePage() {
             .toDate()}
         />
       </div>
-      {modalOpen && (
+      {/* New Occurrence */}
+      {modalOpen && adventure && (
         <OccurrenceModal
           id="create-occurrence-modal"
           key="create-occurrence-modal"
@@ -353,13 +372,19 @@ export default function ViewEditAdventurePage() {
           occurrenceType={activeTabOption}
           title={`New ${activeTabOption} event`}
           creating={true}
-          onSubmit={(data, { notes, description, title }) => {
+          startDate={slotStartDate!}
+          endDate={slotEndDate!}
+          adventureData={adventure}
+          onSubmit={(
+            data,
+            { notes, description, title, startDate, endDate }
+          ) => {
             setModalOpen(false);
-            submitData(data, { notes, description, title });
+            submitData(data, { notes, description, title, startDate, endDate });
           }}
         />
       )}
-      {existingEventModalOpen && (
+      {existingEventModalOpen && adventure && (
         <OccurrenceModal
           id="existing-occurrence-modal"
           key="existing-occurrence-modal"
@@ -368,9 +393,19 @@ export default function ViewEditAdventurePage() {
           occurrenceType={selectedEventType!}
           currentEventId={selectedEventId}
           title={`Edit ${selectedEventType} event`}
-          onSubmit={(data, { notes, description, title }) => {
+          startDate={slotStartDate!}
+          endDate={slotEndDate!}
+          adventureData={adventure}
+          onSubmit={(
+            data,
+            { notes, description, title, startDate, endDate }
+          ) => {
             setExistingEventModalOpen(false);
-            submitData(data, { notes, description, title }, { editing: true });
+            submitData(
+              data,
+              { notes, description, title, startDate, endDate },
+              { editing: true }
+            );
           }}
           onDeleteOccurrence={handleDeleteOccurrence}
         />

@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { AdventureService } from "../../app/services/adventure-service";
 
+import "react-calendar/dist/Calendar.css";
+import "react-clock/dist/Clock.css";
+import DateTimePicker from "react-datetime-picker";
+import "react-datetime-picker/dist/DateTimePicker.css";
+import { z } from "zod";
 import { UserInfoAPIResponse } from "../../lib/definitions/user-info-api-response";
+import { Adventure } from "../../lib/models/adventure.model";
 import {
   AccommodationOccurrence,
   ActivityOccurrence,
@@ -27,12 +33,23 @@ interface OccurrenceModalProps {
   currentEventId?: string | null;
   onClose: () => void;
   creating?: boolean;
+  startDate: Date;
+  endDate: Date;
+  adventureData: Adventure;
   onSubmit?: (
     data: OccurrenceSubmissionData,
     {
       notes,
       description,
-    }: { notes?: string; description?: string; title: string }
+      startDate,
+      endDate,
+    }: {
+      notes?: string;
+      description?: string;
+      title: string;
+      startDate: Date;
+      endDate: Date;
+    }
   ) => void;
   onDeleteOccurrence?: (currentEventId: string) => void;
 }
@@ -42,7 +59,33 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   Travel occurrence state
   */
   const handleDataSubmit = (data: OccurrenceSubmissionData) => {
-    props.onSubmit && props.onSubmit(data, { notes, description, title });
+    setSubmitError(null);
+    // We can use zod to validate the input
+
+    const validationSchema = z
+      .object({
+        startDate: z.date().min(new Date(props.adventureData.startDate)),
+        endDate: z.date().max(new Date(props.adventureData.endDate)),
+      })
+      .refine((data) => new Date(data.startDate) < new Date(data.endDate));
+
+    const res = validationSchema.safeParse({ startDate, endDate });
+
+    if (res.success === false) {
+      setSubmitError(
+        res.error.errors.map((e) => e.message).join("\n") || "Invalid dates"
+      );
+      return;
+    }
+
+    props.onSubmit &&
+      props.onSubmit(data, {
+        notes,
+        description,
+        title,
+        startDate: startDate!,
+        endDate: endDate!,
+      });
   };
 
   const handleDeleteOccurrenceClicked = () => {
@@ -77,6 +120,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              creating={props.creating}
               key={"travel-comments-container"}
             />,
             <DeleteOccurrenceButton
@@ -113,6 +157,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              creating={props.creating}
               key={"accommodation-comments-container"}
             />,
             <DeleteOccurrenceButton
@@ -149,6 +194,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              creating={props.creating}
               key={"activity-comments-container"}
             />,
             <DeleteOccurrenceButton
@@ -185,6 +231,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
             <CommentsContainer
               comments={commentStack}
               onSubmit={handlePostComment}
+              creating={props.creating}
               key={"food-comments-container"}
             />,
 
@@ -208,6 +255,13 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
   );
   const [commentStack, setCommentStack] = useState<StackerComment[]>([]);
   const [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
+
+  // Dates for the occurrence
+  const [startDate, setStartDate] = useState<Date | null>(
+    props.startDate || null
+  );
+  const [endDate, setEndDate] = useState<Date | null>(props.endDate || null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handlePostComment = async (comment: string) => {
     try {
@@ -287,6 +341,7 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
       };
     });
   };
+
   return (
     <div
       key={props.occurrenceType}
@@ -295,6 +350,24 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
       <div className="modal-box w-full max-w-[800px] lg:ml-[30%]">
         {/* Modal title */}
         <h3 className="font-bold text-2xl mb-4">{props.title}</h3>
+        {/* Start end date section */}
+
+        <div className="flex flex-col gap-y-2 pb-4">
+          {/* Custom Datetime pickers go here to allow fine control of start-end dateTimes for an occurrrence */}
+          <div>
+            <h3>Start Time</h3>
+            <DateTimePicker
+              onChange={setStartDate}
+              value={startDate}
+              disabled={true}
+            />
+          </div>
+          <div>
+            <h3>EndTime</h3>
+            <DateTimePicker onChange={setEndDate} value={endDate} />
+          </div>
+        </div>
+
         <div>
           {/* Render a title input text field for all modal types */}
           <h4 className="font-bold text-lg">Title</h4>
@@ -309,6 +382,9 @@ export function OccurrenceModal(props: OccurrenceModalProps) {
         </div>
         {/* Modal is rendered here depending on the occurrence type */}
         {getModalForEventType(props.occurrenceType)}
+        {submitError && (
+          <p className="alert text-red-500 mt-4">{submitError}</p>
+        )}
       </div>
       {confirmDeleteModalOpen && (
         <div className="absolute w-full top-[0] modal-container">

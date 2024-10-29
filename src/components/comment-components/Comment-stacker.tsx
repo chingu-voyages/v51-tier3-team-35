@@ -4,13 +4,17 @@ import { StackerComment } from "../../lib/models/occurrence.model";
 
 interface CommentsContainerProps {
   comments: StackerComment[];
+  creating?: boolean;
   onSubmit: (comment: string) => void;
 }
 export function CommentsContainer({
   comments,
   onSubmit,
+  creating,
 }: CommentsContainerProps) {
   const [commentText, setCommentText] = useState("");
+  if (creating) return null;
+
   return (
     <>
       <h4 className="font-bold text-xl mt-4">Comments</h4>
