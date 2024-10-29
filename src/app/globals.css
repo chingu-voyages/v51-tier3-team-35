@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.pac-container {
+  z-index: 1051 !important;
+}
+
+.modal-container {
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  height: 100vh;
+  width: 100vw;
+  z-index: 1050 !important;
+}
+
+div.react-datepicker__input-container input {
+  padding: 8px;
+  border-radius: 0.5rem;
+}
+
+.grape {
+  color: #7480ff
+}
