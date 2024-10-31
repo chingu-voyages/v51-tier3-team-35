@@ -231,4 +231,13 @@ export const AdventureService = {
       throw new Error("Failed to remove all participants");
     }
   },
+
+  deleteAdventureById: async (adventureId: string): Promise<void> => {
+    const res = await fetch(`/api/adventure/${adventureId}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      throw new Error("Failed to delete adventure");
+    }
+  },
 };
