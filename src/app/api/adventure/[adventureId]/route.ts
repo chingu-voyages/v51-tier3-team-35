@@ -80,3 +80,45 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { adventureId: string } }
+) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Make sure the person that is deleting the adventure is the creator
+
+  await dbConnect();
+  try {
+    const adventure = await AdventureModel.findById(params.adventureId);
+
+    if (!adventure) {
+      return NextResponse.json(
+        { error: `Adventure with id ${params.adventureId} not found` },
+        { status: 404 }
+      );
+    }
+
+    if (adventure.createdBy.toString() !== session.user!._id) {
+      return NextResponse.json(
+        { error: "Only the creator can delete the adventure" },
+        { status: 401 }
+      );
+    }
+
+    await AdventureModel.findByIdAndDelete(params.adventureId);
+    return NextResponse.json(
+      { message: "Adventure was deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: `Server Error: failed to delete adventure: ${error}` },
+      { status: 500 }
+    );
+  }
+}

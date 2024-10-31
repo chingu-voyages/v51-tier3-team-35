@@ -8,7 +8,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { CiSettings } from "react-icons/ci";
 import { HiUserAdd } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
-import { AdventureSetupComponent } from "../../../../components/advebture-setup-component/Adeventure-setup-component";
+import { AdventureSetupComponent } from "../../../../components/adventure-setup-component/Adventure-setup-component";
 import { CollaboratorsModal } from "../../../../components/collaborators-modal/Collaborators-Modal";
 import { OccurrenceSubmissionData } from "../../../../components/occurrence-modal/definitions";
 import { OccurrenceModal } from "../../../../components/occurrence-modal/Occurrence-modal";
@@ -256,6 +256,18 @@ export default function ViewEditAdventurePage() {
     }
   };
 
+  const handleDeleteAdventure = async () => {
+    try {
+      await AdventureService.deleteAdventureById(params.adventureId);
+      setAdventureConfigModalOpen(false);
+      router.push("/home");
+    } catch (error: any) {
+      setToastType("error");
+      setToastMessage("Error deleting adventure");
+      setToastVisible(true);
+    }
+  };
+
   if (status === "unauthenticated") {
     // Only authenticated users can access this page
     router.replace("/signin");
@@ -412,7 +424,7 @@ export default function ViewEditAdventurePage() {
       )}
       {adventureConfigModalOpen && (
         <div className="absolute w-full top-[0] modal-container">
-          <div className="modal-box w-full max-w-[800px] lg:ml-[30%]">
+          <div className="modal-box w-full max-w-[800px] lg:ml-[30%] overflow-clip">
             <div className="flex justify-end">
               <button onClick={() => setAdventureConfigModalOpen(false)}>
                 <MdClose />
@@ -426,7 +438,9 @@ export default function ViewEditAdventurePage() {
                 startDate={adventure.startDate}
                 endDate={adventure.endDate}
                 id={adventure._id!}
+                creatorId={adventure.createdBy}
                 onEventPatched={handlePatchAdventure}
+                onDeleteAdventure={handleDeleteAdventure}
               />
             )}
           </div>
