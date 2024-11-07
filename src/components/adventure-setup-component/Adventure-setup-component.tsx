@@ -16,6 +16,8 @@ interface AdventureSetupComponentProps {
   id?: string;
   endDate?: Date;
   onEventPatched?: () => void;
+  creatorId?: string;
+  onDeleteAdventure?: () => void;
 }
 export function AdventureSetupComponent({
   creating,
@@ -26,9 +28,11 @@ export function AdventureSetupComponent({
   endDate,
   id,
   onEventPatched,
+  creatorId,
+  onDeleteAdventure,
 }: AdventureSetupComponentProps) {
   const router = useRouter();
-  const { status } = useSession();
+  const { data: session, status } = useSession();
 
   const [dateRange, setDateRange] = useState<Record<string, Date>>({
     startDate: startDate || dayjs().toDate(),
@@ -36,6 +40,8 @@ export function AdventureSetupComponent({
   });
 
   const [dateError, setDateError] = useState<string | null>(null);
+  const [confirmDeleteAdventureModalOpen, setConfirmDeleteAdventureModalOpen] =
+    useState<boolean>(false);
 
   const handleCalendarChange = (e: any, controlName: string) => {
     setDateError(null);
@@ -51,6 +57,11 @@ export function AdventureSetupComponent({
         [controlName]: e,
       };
     });
+  };
+
+  const handleDeleteAdventure = async () => {
+    // Create API request to delete the adventure
+    onDeleteAdventure && onDeleteAdventure();
   };
 
   if (status === "unauthenticated") {
@@ -197,7 +208,7 @@ export function AdventureSetupComponent({
                   <div className="text-orange-600">{dateError}</div>
                 )}
               </div>
-              <div className="mt-4 flex justify-center">
+              <div className="mt-4 flex justify-center gap-4 flex-col">
                 <button
                   type="submit"
                   className="btn btn-primary"
@@ -205,6 +216,17 @@ export function AdventureSetupComponent({
                 >
                   {creating ? "Create" : "Update"}
                 </button>
+                {!creating && session?.user?._id === creatorId && (
+                  <button
+                    className="text-red-500"
+                    onClick={(e: any) => {
+                      e.preventDefault();
+                      setConfirmDeleteAdventureModalOpen(true);
+                    }}
+                  >
+                    Delete Adventure
+                  </button>
+                )}
               </div>
               {isSubmitting && (
                 <div className="flex justify-center">
@@ -215,6 +237,28 @@ export function AdventureSetupComponent({
           )}
         </Formik>
       </div>
+      {confirmDeleteAdventureModalOpen && (
+        <div className="absolute top-[0] left-[0] modal-container">
+          <div className="modal-box mt-[10vh]">
+            <h3 className="font-bold text-2xl mb-4">Are you sure?</h3>
+            <p className="mb-4">
+              Do you want to delete this adventure? This action cannot be
+              undone.
+            </p>
+            <div className="flex justify-center gap-x-4">
+              <button className="btn btn-error" onClick={handleDeleteAdventure}>
+                Delete
+              </button>
+              <button
+                className="btn"
+                onClick={() => setConfirmDeleteAdventureModalOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
